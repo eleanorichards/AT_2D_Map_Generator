@@ -4,104 +4,39 @@ using UnityEngine;
 
 public class TileGenerator : MonoBehaviour
 {
-    public List<TileSprite> tileSprites;
-    public Vector2 mapSize;
-    public Sprite defaultTexture;
+    private GameObject cam = null;
+    private int width = 10;
+    private int height = 10;
+    public GameObject tilePrefab = null;
+    public List<GameObject> tiles = new List<GameObject>();
 
-    public GameObject tileContainerPrefab;
-    public GameObject tilePrefab;
-
-    public Vector2 currentPos;
-    public Vector2 viewPortSize;
-
-    private TileSprite[,] _map;
-    private GameObject controller;
-    private GameObject _tileContainer;
-    private List<GameObject> _tiles = new List<GameObject>();
-
-    // Use this for initialization
     private void Start()
     {
-        _map = new TileSprite[(int)mapSize.x, (int)mapSize.y];
-        DefaultTiles();
-        SetTiles();
-    }
-
-    // Update is called once per frame
-    private void Update()
-    {
-    }
-
-    private TileSprite FindTile(Tiles tile)
-    {
-        foreach (TileSprite tileSprite in tileSprites)
+        cam = GameObject.Find("Main Camera");
+        //PlaceGrid();
+        foreach (GameObject tile in tiles)
         {
-            if (tileSprite.tileType == tile) return tileSprite;
         }
-        return null;
     }
 
-    private void DefaultTiles()
+    private void PlaceGrid()
     {
-        for (var y = 0; y < mapSize.y - 1; y++)
+        for (int x = 0; x < width; x++)
         {
-            for (var x = 0; x < mapSize.x - 1; x++)
+            for (int y = 0; y < height; y++)
             {
-                _map[x, y] = new TileSprite("null", defaultTexture, Tiles.NULL);
+                tiles[x * y].transform.position = new Vector2(x, y);
             }
         }
     }
 
-    private void SetTiles()
+    private Vector2 worldToScreen(int x, int y)
     {
-        var index = 0;
-        for (var y = 0; y < mapSize.y - 1; y++)
-        {
-            for (var x = 0; x < mapSize.x - 1; x++)
-            {
-                _map[x, y] = new TileSprite(tileSprites[index].name, tileSprites[index].texture, tileSprites[index].tileType);
-                index++;
-                if (index > tileSprites.Count - 1) index = 0;
-            }
-        }
+        return new Vector2(x - cam.transform.position.x, y: y - cam.transform.position.y);
     }
 
-    private void AddTilesToWorld()
+    private Vector2 screenToWorld(int x, int y)
     {
-        foreach (GameObject o in _tiles)
-        {
-            o.SetActive(false);
-        }
-        _tiles.Clear();
-        //OBJECT POOLING
-        _tileContainer = new tileContainerPrefab;
-        var tileSize = .64f;
-        var viewOffsetX = viewPortSize.x / 2f;
-        var viewOffsetY = viewPortSize.y / 2f;
-        for (var y = -viewOffsetY; y < viewOffsetY; y++)
-        {
-            for (var x = -viewOffsetX; x < viewOffsetX; x++)
-            {
-                var tX = x * tileSize;
-                var tY = y * tileSize;
-
-                var iX = x + currentPos.x;
-                var iY = y + currentPos.y;
-
-                if (iX < 0) continue;
-                if (iY < 0) continue;
-                if (iX > mapSize.x - 2) continue;
-                if (iY > mapSize.y - 2) continue;
-
-                //OBJECT POOLING
-                var t = Spawn(tilePrefab);
-
-                t.transform.position = new Vector3(tX, tY, 0);
-                t.transform.SetParent(_tileContainer.transform);
-                var renderer = t.GetComponent<SpriteRenderer>();
-                renderer.sprite = _map[(int)x + (int)currentPos.x, (int)y + (int)currentPos.y].texture;
-                _tiles.Add(t);
-            }
-        }
+        return new Vector2(x + cam.transform.position.x, y + cam.transform.position.y);
     }
 }

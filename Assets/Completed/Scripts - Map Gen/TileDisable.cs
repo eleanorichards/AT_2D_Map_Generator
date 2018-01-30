@@ -2,24 +2,20 @@
 using System.Collections.Generic;
 using UnityEngine;
 
-public enum Tiles
-{
-    NULL,
-    GRASS,
-    STONE,
-    DIRT,
-    WATER
-}
-
-public class Tile : MonoBehaviour
+public class TileDisable : MonoBehaviour
 {
     // Use this for initialization
-    private void OnEnable()
+    private void OnSceneExit()
     {
+        Destroy();
     }
 
     // Update is called once per frame
-    private void Update()
+    private void Destroy()
+    {
+    }
+
+    private void OnDisable()
     {
     }
 }
