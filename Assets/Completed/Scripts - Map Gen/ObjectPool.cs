@@ -88,7 +88,7 @@ public class ObjectPool : MonoBehaviour
     {
         if (_tile.tag == "Tile")
         {
-            _tile.SetActive(true);
+            //    _tile.SetActive(true);
         }
     }
 }

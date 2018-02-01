@@ -14,18 +14,21 @@ public class TileGenerator : MonoBehaviour
     {
         cam = GameObject.Find("Main Camera");
         //PlaceGrid();
-        foreach (GameObject tile in tiles)
-        {
-        }
     }
 
-    private void PlaceGrid()
+    public void PlaceGrid()
     {
         for (int x = 0; x < width; x++)
         {
             for (int y = 0; y < height; y++)
             {
-                tiles[x * y].transform.position = new Vector2(x, y);
+                GameObject obj = ObjectPool.SharedInstance.GetPooledObject("Tile");
+                if (obj != null)
+                {
+                    obj.transform.position = new Vector2(x, y);
+                    obj.SetActive(true);
+                }
+                //tiles[x * y].transform.position = new Vector2(x, y);
             }
         }
     }
