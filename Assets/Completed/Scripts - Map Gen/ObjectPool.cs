@@ -42,6 +42,7 @@ public class ObjectPool : MonoBehaviour
     //Instantiate(Object original, Vector3 position, Quaternion rotation, Transform parent);
     private void Start()
     {
+        //Crate all objects in pool
         pooledObject = new List<GameObject>();
         foreach (ObjectPoolItem item in itemsToPool)
         {
