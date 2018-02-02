@@ -24,12 +24,13 @@ public class ObjectPool : MonoBehaviour
     public int width = 10;
     public int height = 10;
 
+    public int smoothIterations = 0;
+
+    // public bool Cave;
     private int[,] map;
 
     [Range(0, 100)]
     public int randomFillPercent;
-
-    private TileGenerator tileGen;
 
     private void Awake()
     {
@@ -54,6 +55,29 @@ public class ObjectPool : MonoBehaviour
             }
         }
         GenerateMap();
+        DrawMapTiles();
+    }
+
+    private void DrawMapTiles()
+    {
+        for (int x = 0; x < width; x++)
+        {
+            for (int y = 0; y < height; y++)
+            {
+                if (map[x, y] == 1)
+                {
+                    GameObject tile = GetPooledObject("Tile");
+                    tile.transform.position = new Vector2(x, y);
+                    tile.SetActive(true);
+                }
+                else if (map[x, y] == 0)
+                {
+                    GameObject blank = GetPooledObject("Blank");
+                    blank.transform.position = new Vector2(x, y);
+                    blank.SetActive(true);
+                }
+            }
+        }
     }
 
     private void GenerateMap()
@@ -61,6 +85,11 @@ public class ObjectPool : MonoBehaviour
         map = new int[width, height];
         Vector2 rndSeed = new Vector2(1, 5);
         RandomFillMap(rndSeed);
+        for (int i = 0; i < smoothIterations; i++)
+        {
+            SmoothMap();
+        }
+        // DrawMap(); //populate with actual tiles
     }
 
     private void RandomFillMap(Vector2 mapOrigin)
@@ -71,21 +100,67 @@ public class ObjectPool : MonoBehaviour
         {
             for (int y = 0; y < height; y++)
             {
-                map[x, y] = rndSeed.Next(0, 100);
-                if (map[x, y] < randomFillPercent)
+                if (x == 0 || x == width - 1 || y == 0 || y == height - 1)
                 {
-                    GameObject tile = GetPooledObject("Tile");
-                    tile.transform.position = new Vector2(x, y);
-                    tile.SetActive(true);
+                    map[x, y] = 1;
                 }
                 else
                 {
-                    GameObject blank = GetPooledObject("Blank");
-                    blank.transform.position = new Vector2(x, y);
-                    blank.SetActive(true);
+                    map[x, y] = rndSeed.Next(0, 100);
+                    if (map[x, y] < randomFillPercent)
+                    {
+                        map[x, y] = 1;
+                    }
+                    else
+                    {
+                        map[x, y] = 0;
+                    }
                 }
             }
         }
+    }
+
+    private void SmoothMap()
+    {
+        for (int x = 0; x < width; x++)
+        {
+            for (int y = 0; y < height; y++)
+            {
+                int neighbouringWalls = GetSurroundingObjCount(x, y);
+
+                if (neighbouringWalls > 4)
+                {
+                    map[x, y] = 1;
+                }
+                else
+                {
+                    map[x, y] = 0;
+                }
+            }
+        }
+    }
+
+    private int GetSurroundingObjCount(int curX, int curY)
+    {
+        int wallCount = 0;
+        for (int neighX = curX - 1; neighX <= curX + 1; neighX++)
+        {
+            for (int neighY = curY - 1; neighY <= curY + 1; neighY++)
+            {
+                if (neighX >= 0 && neighX < width && neighY >= 0 && neighY < height) //check within bounds
+                {
+                    if (neighX != curX || neighY != curY)
+                    {
+                        wallCount += map[neighX, neighY];
+                    }
+                }
+                else
+                {
+                    wallCount++;
+                }
+            }
+        }
+        return wallCount;
     }
 
     //Return inactive tiles in the pool
@@ -136,125 +211,28 @@ public class ObjectPool : MonoBehaviour
     }
 }
 
-//public static TilePool instance;
-
-///// <summary>
-///// The object prefabs which the pool can handle.
-///// </summary>
-//public GameObject[] objectPrefabs;
-
-///// <summary>
-///// The pooled objects currently available.
-///// </summary>
-//public List<GameObject>[] pooledObjects;
-
-///// <summary>
-///// The amount of objects of each type to buffer.
-///// </summary>
-//public int[] amountToBuffer;
-
-//public int defaultBufferAmount = 3;
-
-///// <summary>
-///// The container object that we will keep unused pooled objects so we dont clog up the editor with objects.
-///// </summary>
-//protected GameObject containerObject;
-
-//private void Awake()
-//{
-//    instance = this;
-//}
-
-//// Use this for initialization
-//private void Start()
-//{
-//    containerObject = new GameObject("ObjectPool");
-
-//    //Loop through the object prefabs and make a new list for each one.
-//    //We do this because the pool can only support prefabs set to it in the editor,
-//    //so we can assume the lists of pooled objects are in the same order as object prefabs in the array
-//    pooledObjects = new List<GameObject>[objectPrefabs.Length];
-
-//    int i = 0;
-//    foreach (GameObject objectPrefab in objectPrefabs)
-//    {
-//        pooledObjects[i] = new List<GameObject>();
-
-//        int bufferAmount;
-
-//        if (i < amountToBuffer.Length) bufferAmount = amountToBuffer[i];
-//        else
-//            bufferAmount = defaultBufferAmount;
-
-//        for (int n = 0; n < bufferAmount; n++)
-//        {
-//            GameObject newObj = Instantiate(objectPrefab) as GameObject;
-//            newObj.name = objectPrefab.name;
-//            PoolObject(newObj);
-//        }
-
-//        i++;
-//    }
-//}
-
-///// <summary>
-///// Gets a new object for the name type provided.  If no object type exists or if onlypooled is true and there is no objects of that type in the pool
-///// then null will be returned.
-///// </summary>
-///// <returns>
-///// The object for type.
-///// </returns>
-///// <param name='objectType'>
-///// Object type.
-///// </param>
-///// <param name='onlyPooled'>
-///// If true, it will only return an object if there is one currently pooled.
-///// </param>
-//public GameObject GetObjectForType(string objectType, bool onlyPooled)
-//{
-//    for (int i = 0; i < objectPrefabs.Length; i++)
-//    {
-//        GameObject prefab = objectPrefabs[i];
-//        if (prefab.name == objectType)
-//        {
-//            if (pooledObjects[i].Count > 0)
-//            {
-//                GameObject pooledObject = pooledObjects[i][0];
-//                pooledObjects[i].RemoveAt(0);
-//                pooledObject.transform.parent = null;
-//                pooledObject.SetActive(true);
-
-//                return pooledObject;
-//            }
-//            else if (!onlyPooled)
-//            {
-//                return Instantiate(objectPrefabs[i]) as GameObject;
-//            }
-
-//            break;
-//        }
-//    }
-
-//    //If we have gotten here either there was no object of the specified type or non were left in the pool with onlyPooled set to true
-//    return null;
-//}
-
-///// <summary>
-///// Pools the object specified.  Will not be pooled if there is no prefab of that type.
-///// </summary>
-///// <param name='obj'>
-///// Object to be pooled.
-///// </param>
-//public void PoolObject(GameObject obj)
-//{
-//    for (int i = 0; i < objectPrefabs.Length; i++)
-//    {
-//        if (objectPrefabs[i].name == obj.name)
-//        {
-//            obj.SetActiveRecursively(false);
-//            obj.transform.parent = containerObject.transform;
-//            pooledObjects[i].Add(obj);
-//            return;
-//        }
-//    }
-//}
+/* else //Level gen - needs work
+                {
+                    if (y > height - 5)
+                    {
+                        GameObject blank = GetPooledObject("Blank");
+                        blank.transform.position = new Vector2(x, y);
+                        blank.SetActive(true);
+                    }
+                    else
+                    {
+                        map[x, y] = rndSeed.Next(0, 100);
+                        if (map[x, y] < randomFillPercent)
+                        {
+                            GameObject tile = GetPooledObject("Tile");
+                            tile.transform.position = new Vector2(x, y);
+                            tile.SetActive(true);
+                        }
+                        else
+                        {
+                            GameObject blank = GetPooledObject("Blank");
+                            blank.transform.position = new Vector2(x, y);
+                            blank.SetActive(true);
+                        }
+                    }
+                }*/
