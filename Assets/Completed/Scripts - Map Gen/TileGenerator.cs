@@ -16,17 +16,17 @@ public class TileGenerator : MonoBehaviour
         //PlaceGrid();
     }
 
-    public void PlaceGrid()
+    public void PlaceGrid(GameObject tile)
     {
         for (int x = 0; x < width; x++)
         {
             for (int y = 0; y < height; y++)
             {
-                GameObject obj = ObjectPool.SharedInstance.GetPooledObject("Tile");
-                if (obj != null)
+                //GameObject obj = ObjectPool.SharedInstance.GetPooledObject("Tile");
+                if (tile != null)
                 {
-                    obj.transform.position = new Vector2(x, y);
-                    obj.SetActive(true);
+                    tile.transform.position = new Vector2(x, y);
+                    tile.SetActive(true);
                 }
                 //tiles[x * y].transform.position = new Vector2(x, y);
             }

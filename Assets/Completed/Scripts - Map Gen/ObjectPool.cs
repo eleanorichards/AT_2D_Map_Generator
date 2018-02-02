@@ -1,5 +1,6 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
+using System;
 using UnityEngine;
 
 [System.Serializable]
@@ -8,7 +9,11 @@ public class ObjectPoolItem
     public GameObject objectToPool;
     public bool shouldExpand = true;
     public int poolSize = 100;
+    public string itemName = "";
 }
+
+//acces grid index:
+//totalWidth*height + curwidth
 
 public class ObjectPool : MonoBehaviour
 {
@@ -16,8 +21,13 @@ public class ObjectPool : MonoBehaviour
     public List<ObjectPoolItem> itemsToPool;
     public static ObjectPool SharedInstance;
 
-    private int width = 10;
-    private int height = 10;
+    public int width = 10;
+    public int height = 10;
+
+    private int[,] map;
+
+    [Range(0, 100)]
+    public int randomFillPercent;
 
     private TileGenerator tileGen;
 
@@ -29,20 +39,52 @@ public class ObjectPool : MonoBehaviour
     //Create tile array
     //set inactive
     //Add to tile list
+    //Instantiate(Object original, Vector3 position, Quaternion rotation, Transform parent);
     private void Start()
     {
-        tileGen = GameObject.Find("TileGenerator").GetComponent<TileGenerator>();
         pooledObject = new List<GameObject>();
         foreach (ObjectPoolItem item in itemsToPool)
         {
             for (int i = 0; i < item.poolSize; i++)
             {
-                GameObject tile = (GameObject)Instantiate(item.objectToPool);
-                tile.SetActive(false);
-                pooledObject.Add(tile);
+                GameObject obj = Instantiate(item.objectToPool);
+                obj.SetActive(false);
+                pooledObject.Add(obj);
             }
         }
-        tileGen.PlaceGrid();
+        GenerateMap();
+    }
+
+    private void GenerateMap()
+    {
+        map = new int[width, height];
+        Vector2 rndSeed = new Vector2(1, 5);
+        RandomFillMap(rndSeed);
+    }
+
+    private void RandomFillMap(Vector2 mapOrigin)
+    {
+        System.Random rndSeed = new System.Random((int)mapOrigin.x);
+
+        for (int x = 0; x < width; x++)
+        {
+            for (int y = 0; y < height; y++)
+            {
+                map[x, y] = rndSeed.Next(0, 100);
+                if (map[x, y] < randomFillPercent)
+                {
+                    GameObject tile = GetPooledObject("Tile");
+                    tile.transform.position = new Vector2(x, y);
+                    tile.SetActive(true);
+                }
+                else
+                {
+                    GameObject blank = GetPooledObject("Blank");
+                    blank.transform.position = new Vector2(x, y);
+                    blank.SetActive(true);
+                }
+            }
+        }
     }
 
     //Return inactive tiles in the pool

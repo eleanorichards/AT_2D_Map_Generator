@@ -24,7 +24,9 @@ public class MapBoundary : MonoBehaviour
         }
     }
 
+    //private void Check
     //Lay out entire tile map with transforms
+
     //when player ~ transform distance < screenwidth
     //set active!
     //Instead of OnTriggerEnter, needs to be a positioning thing
@@ -36,6 +38,6 @@ public class MapBoundary : MonoBehaviour
             obj.transform.position = transform.position;
             obj.SetActive(true);
         }
-        tilepool.EnableOnEnter(col.gameObject);
+        //tilepool.EnableOnEnter(col.gameObject);
     }
 }
