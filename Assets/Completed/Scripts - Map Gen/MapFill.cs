@@ -1,21 +1,16 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
-using UnityEditor;
 
-public class AutomataFill : Editor
+public class MapFill : MonoBehaviour
 {
     // Use this for initialization
-    private void Start()
+    void Start()
     {
     }
 
     // Update is called once per frame
-    private void Update()
-    {
-    }
-
-    public override void OnInspectorGUI()
+    void Update()
     {
     }
 }

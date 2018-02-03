@@ -21,13 +21,14 @@ public class ObjectPool : MonoBehaviour
     public List<ObjectPoolItem> itemsToPool;
     public static ObjectPool SharedInstance;
 
-    public int width = 10;
-    public int height = 10;
+    public int width = 0;
+    public int height = 0;
 
     [Range(0, 10)]
     public int smoothIterations = 0;
 
-    // public bool Cave;
+    public int seed = 0;
+    public bool Cave;
     private int[,] map;
 
     [Range(0, 100)]
@@ -56,11 +57,22 @@ public class ObjectPool : MonoBehaviour
             }
         }
         GenerateMap();
-        DrawMapTiles();
+    }
+
+    private void Update()
+    {
+        if (Input.GetButton("Jump"))
+        {
+            GenerateMap();
+            Debug.Log("new map...");
+        }
     }
 
     private void DrawMapTiles()
     {
+        //Find all active tiles
+        //            _tile.SetActive(false);
+        //Destroy(_tile);
         for (int x = 0; x < width; x++)
         {
             for (int y = 0; y < height; y++)
@@ -84,19 +96,20 @@ public class ObjectPool : MonoBehaviour
     private void GenerateMap()
     {
         map = new int[width, height];
-        Vector2 rndSeed = new Vector2(1, 5);
-        RandomFillMap(rndSeed);
+        RandomFillMap();
         for (int i = 0; i < smoothIterations; i++)
         {
-            SmoothMap();
+            map = SmoothMap();
         }
-        // DrawMap(); //populate with actual tiles
+        DrawMapTiles();
     }
 
-    private void RandomFillMap(Vector2 mapOrigin)
+    private void RandomFillMap()
     {
-        System.Random rndSeed = new System.Random((int)mapOrigin.x);
-
+        System.Random rndSeed = new System.Random(seed);
+        if (Cave)
+        {
+        }
         for (int x = 0; x < width; x++)
         {
             for (int y = 0; y < height; y++)
@@ -121,8 +134,10 @@ public class ObjectPool : MonoBehaviour
         }
     }
 
-    private void SmoothMap()
+    private int[,] SmoothMap()
     {
+        int[,] tempMap = new int[width, height];
+
         for (int x = 0; x < width; x++)
         {
             for (int y = 0; y < height; y++)
@@ -131,14 +146,15 @@ public class ObjectPool : MonoBehaviour
 
                 if (neighbouringWalls > 4)
                 {
-                    map[x, y] = 1;
+                    tempMap[x, y] = 1;
                 }
                 else
                 {
-                    map[x, y] = 0;
+                    tempMap[x, y] = 0;
                 }
             }
         }
+        return tempMap;
     }
 
     private int GetSurroundingObjCount(int curX, int curY)
