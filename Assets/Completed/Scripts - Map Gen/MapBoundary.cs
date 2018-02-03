@@ -32,12 +32,12 @@ public class MapBoundary : MonoBehaviour
     //Instead of OnTriggerEnter, needs to be a positioning thing
     private void OnTriggerEnter2D(Collider2D col)
     {
-        GameObject obj = ObjectPool.SharedInstance.GetPooledObject("Tile");
-        if (obj != null)
-        {
-            obj.transform.position = transform.position;
-            obj.SetActive(true);
-        }
+        //GameObject obj = ObjectPool.SharedInstance.GetPooledObject("Tile");
+        //if (obj != null)
+        //{
+        //    obj.transform.position = transform.position;
+        //    obj.SetActive(true);
+        //}
         //tilepool.EnableOnEnter(col.gameObject);
     }
 }

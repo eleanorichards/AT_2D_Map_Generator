@@ -24,6 +24,7 @@ public class ObjectPool : MonoBehaviour
     public int width = 10;
     public int height = 10;
 
+    [Range(0, 10)]
     public int smoothIterations = 0;
 
     // public bool Cave;
