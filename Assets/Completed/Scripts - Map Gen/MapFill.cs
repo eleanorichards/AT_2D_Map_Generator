@@ -78,25 +78,54 @@ public class MapFill : MonoBehaviour
         System.Random rndSeed = new System.Random(seed);
         if (Cave)
         {
-        }
-        for (int x = 0; x < width; x++)
-        {
-            for (int y = 0; y < height; y++)
+            for (int x = 0; x < width; x++)
             {
-                if (x == 0 || x == width - 1 || y == 0 || y == height - 1)
+                for (int y = 0; y < height; y++)
                 {
-                    map[x, y] = 1;
-                }
-                else
-                {
-                    map[x, y] = rndSeed.Next(0, 100);
-                    if (map[x, y] < randomFillPercent)
+                    if (x == 0 || x == width - 1 || y == 0 || y == height - 1)
                     {
                         map[x, y] = 1;
                     }
                     else
                     {
+                        map[x, y] = rndSeed.Next(0, 100);
+                        if (map[x, y] < randomFillPercent)
+                        {
+                            map[x, y] = 1;
+                        }
+                        else
+                        {
+                            map[x, y] = 0;
+                        }
+                    }
+                }
+            }
+        }
+        else
+        {
+            for (int x = 0; x < width; x++)
+            {
+                for (int y = 0; y < height; y++)
+                {
+                    if (y < 3)
+                    {
+                        map[x, y] = 1;
+                    }
+                    if (y > height - 3)
+                    {
                         map[x, y] = 0;
+                    }
+                    if (y > 3 && y < height - 3)
+                    {
+                        map[x, y] = rndSeed.Next(0, 100);
+                        if (map[x, y] < randomFillPercent)
+                        {
+                            map[x, y] = 1;
+                        }
+                        else
+                        {
+                            map[x, y] = 0;
+                        }
                     }
                 }
             }

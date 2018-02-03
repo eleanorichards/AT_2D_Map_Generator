@@ -14,14 +14,14 @@ public class MapBoundary : MonoBehaviour
 
     private void OnTriggerExit2D(Collider2D col)
     {
-        if (col.gameObject.CompareTag("Tile"))
-        {
-            tilepool.DisableOnExit(col.gameObject);
-        }
-        else
-        {
-            Destroy(col.gameObject);
-        }
+        //if (col.gameObject.CompareTag("Tile"))
+        //{
+        //    tilepool.DisableOnExit(col.gameObject);
+        //}
+        //else
+        //{
+        //    Destroy(col.gameObject);
+        //}
     }
 
     //private void Check
