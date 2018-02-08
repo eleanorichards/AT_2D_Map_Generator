@@ -18,6 +18,11 @@ public class MapFill : MonoBehaviour
     [Range(0, 100)]
     public int randomFillPercent;
 
+    public int gCost;
+    public int hCost;
+
+    public List<Tile> ActiveTiles = new List<Tile>();
+
     // Use this for initialization
     private void Start()
     {
@@ -35,13 +40,16 @@ public class MapFill : MonoBehaviour
         }
     }
 
+    private int fCost()
+    {
+        return gCost + hCost;
+    }
+
     private void DrawMapTiles()
     {
-        //Find all active tiles
-        //_tile.SetActive(false);
-        ///Destroy(_tile);
         pool.DeactivateObject("Tile");
         pool.DeactivateObject("Blank");
+        ActiveTiles.Clear();
         for (int x = 0; x < width; x++)
         {
             for (int y = 0; y < height; y++)
@@ -49,8 +57,11 @@ public class MapFill : MonoBehaviour
                 if (map[x, y] == 1)
                 {
                     GameObject tile = pool.GetPooledObject("Tile");
-                    tile.transform.position = new Vector2(x, y);
+                    tile.transform.position = new Vector2(x, y); //Transform.position = this + mapGenerator.x, mapGenerator.y
                     tile.SetActive(true);
+                    Tile tileComponent = tile.GetComponent<Tile>();
+                    ActiveTiles.Add(tileComponent);
+                    tileComponent.SetPosition(x, y);
                 }
                 else if (map[x, y] == 0)
                 {
@@ -101,7 +112,7 @@ public class MapFill : MonoBehaviour
                 }
             }
         }
-        else
+        else //if not cave i.e. 2D side view level
         {
             for (int x = 0; x < width; x++)
             {
@@ -160,7 +171,7 @@ public class MapFill : MonoBehaviour
         int wallCount = 0;
         for (int neighX = curX - 1; neighX <= curX + 1; neighX++)
         {
-            for (int neighY = curY - 1; neighY <= curY + 1; neighY++)
+            for (int neighY = curY - 1; neighY <= curY + 1; neighY++) //for each neighbour
             {
                 if (neighX >= 0 && neighX < width && neighY >= 0 && neighY < height) //check within bounds
                 {
@@ -176,5 +187,92 @@ public class MapFill : MonoBehaviour
             }
         }
         return wallCount;
+    }
+
+    private void ConnectTunnels(Tile _startPos, Tile _endPos)
+    {
+        //map = 1 = tile
+        //map = 0 = blank
+        List<Tile> openList = new List<Tile>();
+        List<Tile> closedList = new List<Tile>();
+
+        openList = pool.ReturnActiveTiles("Tile");
+
+        //Get tile neighbours
+
+        while (openList.Count > 0)
+        {
+            Tile currentTile = openList[0];
+
+            for (int i = 1; i < openList.Count; i++)
+            {
+                if (openList[i].fCost() <= currentTile.fCost() && openList[i].hCost < currentTile.hCost)
+                {
+                    currentTile = openList[i];
+                }
+            }
+
+            openList.Remove(currentTile);
+            closedList.Add(currentTile);
+
+            if (currentTile == _endPos)
+            {
+                return; //end found
+            }
+
+            for (int x = -1; x <= 1; x++)
+            {
+                for (int y = -1; y <= 1; y++)
+                {
+                    if (x != 0 && y != 0) //if not this tile
+                    {
+                        int checkX = currentTile.localX + x; //check x neighbour
+                        int checkY = currentTile.localY + y; //check y neighbour
+
+                        if (checkX >= 0 && checkX < width && checkY >= 0 && checkY < height) //if within grid bounds
+                        {
+                            //for each neighbour
+                            if (map[checkX, checkY] == 1 || closedList.Contains(ReturnTile(checkX, checkY)))
+                            {
+                                //this is too complicated. jsut build fucking tunnels.
+                            }
+                        }
+                    }
+                }
+            }
+            //A* pathfinding
+            //distance form start node + distance from end node
+            /*
+             open:nodes to be evaluated
+             closed: nodes already evaluated
+
+            if(tile.tag("Tile"))
+            for each(Tile i)
+                for each (Tile b)
+             if(tile[i].Distance(this, startPos) + Tile.Distance(this,Startpos)) < tile[b].Distance(this, startPos) + Tile[b].Distance(this,Startpos))
+              closedlist.Add(tile[i])
+              openlist.Remove(tile[i])
+              if(tile[i] == targetTile)
+                return
+
+             for each(neighbourTile)
+                if(!closed)
+                    if (Distance(neighbourTile, startTile) < minDist)
+                        Tile shortestTile = neighbourTile
+
+             */
+        }
+    }
+
+    private Tile ReturnTile(int x, int y)
+    {
+        foreach (Tile tile in ActiveTiles)
+        {
+            if (tile.TileLocation(x, y))
+            {
+                return tile;
+            }
+        }
+        return null;
     }
 }

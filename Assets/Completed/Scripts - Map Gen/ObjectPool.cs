@@ -82,6 +82,21 @@ public class ObjectPool : MonoBehaviour
             }
         }
     }
+
+    public List<Tile> ReturnActiveTiles(string tag)
+    {
+        List<Tile> tiles = new List<Tile>();
+
+        for (int i = 0; i < pooledObject.Count; i++)
+        {
+            if (pooledObject[i].activeInHierarchy && pooledObject[i].CompareTag(tag))
+            {
+                tiles.Add(pooledObject[i].GetComponent<Tile>());
+            }
+        }
+
+        return tiles;
+    }
 }
 
 /* else //Level gen - needs work
