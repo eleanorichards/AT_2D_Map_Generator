@@ -26,6 +26,8 @@ public class MapFill : MonoBehaviour
 
     public List<Tile> ActiveTiles = new List<Tile>();
 
+    private int floodNum = 0;
+
     // Use this for initialization
     private void Start()
     {
@@ -230,27 +232,30 @@ public class MapFill : MonoBehaviour
             }
         }
         //Floodfill Check
-        FloodFill(digMap);
+        FloodFill(digMap, 1, height - 1);
 
         return digMap;
     }
 
-    private bool FloodFill(int[,] _map)
+    private bool FloodFill(int[,] _map, int curX, int curY)
     {
-        //var q = new Queue<_map>);
-
-        int FloodNum = randomFillPercent;
-        int[,] floodMap = new int[width, height];
-        int x = 0;
-        int y = height;
-        if (_map[x, y] == 0)
+        if (_map[curX, curY] == 0)
         {
-            floodMap[x, y] = 1;
-            if (floodMap[,] < FloodNum)
-            {
-            }
+            floodNum++; //flooded tiles incrementor
+            if (curX < width)
+                FloodFill(_map, curX + 1, curY);
+            if (curX > 0)
+                FloodFill(_map, curX - 1, curY);
+            if (curY < height)
+                FloodFill(_map, curX, curY + 1);
+            if (curY > 0)
+                FloodFill(_map, curX, curY - 1);
+            return true;
         }
-        return false;
+        else
+        {
+            return false;
+        }
     }
 
     private Tile ReturnTile(int x, int y)
