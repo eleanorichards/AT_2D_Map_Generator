@@ -10,9 +10,12 @@ public class Tile : MonoBehaviour
     public int localX;
     public int localY;
 
+    public Sprite[] tileTex;
+
     // Use this for initialization
-    private void Start()
+    private void OnAwake()
     {
+        //switch to random of 4 ground textures
     }
 
     public int fCost()

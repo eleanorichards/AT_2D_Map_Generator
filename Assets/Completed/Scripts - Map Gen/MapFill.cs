@@ -18,6 +18,9 @@ public class MapFill : MonoBehaviour
     [Range(0, 100)]
     public int randomFillPercent;
 
+    [Range(0, 10)]
+    public int CaveIterations = 1;
+
     public int gCost;
     public int hCost;
 
@@ -54,20 +57,33 @@ public class MapFill : MonoBehaviour
         {
             for (int y = 0; y < height; y++)
             {
-                if (map[x, y] == 1)
+                switch (map[x, y])
                 {
-                    GameObject tile = pool.GetPooledObject("Tile");
-                    tile.transform.position = new Vector2(x, y); //Transform.position = this + mapGenerator.x, mapGenerator.y
-                    tile.SetActive(true);
-                    Tile tileComponent = tile.GetComponent<Tile>();
-                    ActiveTiles.Add(tileComponent);
-                    tileComponent.SetPosition(x, y);
-                }
-                else if (map[x, y] == 0)
-                {
-                    GameObject blank = pool.GetPooledObject("Blank");
-                    blank.transform.position = new Vector2(x, y);
-                    blank.SetActive(true);
+                    case 0:
+                        GameObject blank = pool.GetPooledObject("Blank");
+                        blank.transform.position = new Vector2(x, y);
+                        blank.SetActive(true);
+                        break;
+
+                    case 1:
+                        GameObject tile = pool.GetPooledObject("Tile");
+                        tile.transform.position = new Vector2(x, y); //Transform.position = this + mapGenerator.x, mapGenerator.y
+                        tile.SetActive(true);
+                        Tile tileComponent = tile.GetComponent<Tile>();
+                        ActiveTiles.Add(tileComponent);
+                        tileComponent.SetPosition(x, y);
+                        break;
+
+                    case 2:
+
+                        break;
+
+                    case 3:
+
+                        break;
+
+                    default:
+                        break;
                 }
             }
         }
@@ -81,6 +97,10 @@ public class MapFill : MonoBehaviour
         {
             map = SmoothMap();
         }
+
+        map = ConnectTunnels(map);
+
+        // tempMap[x, y] = ConnectTunnels(tempMap, x, y);
         DrawMapTiles();
     }
 
@@ -155,14 +175,19 @@ public class MapFill : MonoBehaviour
 
                 if (neighbouringWalls > 4)
                 {
+                    //for (int i = 0; i < CaveIterations; i++)
+
                     tempMap[x, y] = 1;
                 }
                 else
                 {
                     tempMap[x, y] = 0;
                 }
+                //for (int i = 0; i < CaveIterations; i++)
+                //tempMap[x, y] = ConnectTunnels(tempMap, x, y);
             }
         }
+
         return tempMap;
     }
 
@@ -189,9 +214,60 @@ public class MapFill : MonoBehaviour
         return wallCount;
     }
 
-    private void ConnectTunnels(Tile _startPos, Tile _endPos)
+    private int[,] ConnectTunnels(int[,] _tempMap)
     {
-        //map = 1 = tile
+        int[,] digMap = new int[width, height];
+        digMap = _tempMap;
+        //int neighbouringWalls = GetSurroundingObjCount(curX, curY);
+        for (int x = width - 1; x > 0; x--)
+        {
+            for (int y = height - 1; y > 0; y--)
+            {
+                if (map[x, y - 1] == 0)
+                {
+                    digMap[x, y] = 0;
+                }
+            }
+        }
+        //Floodfill Check
+        FloodFill(digMap);
+
+        return digMap;
+    }
+
+    private bool FloodFill(int[,] _map)
+    {
+        //var q = new Queue<_map>);
+
+        int FloodNum = randomFillPercent;
+        int[,] floodMap = new int[width, height];
+        int x = 0;
+        int y = height;
+        if (_map[x, y] == 0)
+        {
+            floodMap[x, y] = 1;
+            if (floodMap[,] < FloodNum)
+            {
+            }
+        }
+        return false;
+    }
+
+    private Tile ReturnTile(int x, int y)
+    {
+        foreach (Tile tile in ActiveTiles)
+        {
+            if (tile.TileLocation(x, y))
+            {
+                return tile;
+            }
+        }
+        return null;
+    }
+}
+
+/*
+ //map = 1 = tile
         //map = 0 = blank
         List<Tile> openList = new List<Tile>();
         List<Tile> closedList = new List<Tile>();
@@ -259,20 +335,6 @@ public class MapFill : MonoBehaviour
                 if(!closed)
                     if (Distance(neighbourTile, startTile) < minDist)
                         Tile shortestTile = neighbourTile
-
-             */
         }
-    }
 
-    private Tile ReturnTile(int x, int y)
-    {
-        foreach (Tile tile in ActiveTiles)
-        {
-            if (tile.TileLocation(x, y))
-            {
-                return tile;
-            }
-        }
-        return null;
-    }
-}
+     */
