@@ -15,16 +15,13 @@ public class MapFill : MonoBehaviour
     public bool Cave;
     private int[,] map;
 
-    [Range(0, 100)]
-    public int randomFillPercent;
+    [Range(0, 90)]
+    public float randomFillPercent;
 
     [Range(0, 10)]
     public int CaveIterations = 1;
 
-    public int gCost;
-    public int hCost;
-
-    public List<Tile> ActiveTiles = new List<Tile>();
+    //public List<Tile> ActiveTiles = new List<Tile>();
 
     private int floodNum = 0;
 
@@ -40,21 +37,17 @@ public class MapFill : MonoBehaviour
     {
         if (Input.GetButton("Jump"))
         {
+            floodNum = 0;
             GenerateMap();
             Debug.Log("new map...");
         }
-    }
-
-    private int fCost()
-    {
-        return gCost + hCost;
     }
 
     private void DrawMapTiles()
     {
         pool.DeactivateObject("Tile");
         pool.DeactivateObject("Blank");
-        ActiveTiles.Clear();
+        //ActiveTiles.Clear();
         for (int x = 0; x < width; x++)
         {
             for (int y = 0; y < height; y++)
@@ -62,18 +55,17 @@ public class MapFill : MonoBehaviour
                 switch (map[x, y])
                 {
                     case 0:
-                        GameObject blank = pool.GetPooledObject("Blank");
-                        blank.transform.position = new Vector2(x, y);
-                        blank.SetActive(true);
+
                         break;
 
-                    case 1:
+                    case 1: //Ground Tile
                         GameObject tile = pool.GetPooledObject("Tile");
                         tile.transform.position = new Vector2(x, y); //Transform.position = this + mapGenerator.x, mapGenerator.y
+
                         tile.SetActive(true);
-                        Tile tileComponent = tile.GetComponent<Tile>();
-                        ActiveTiles.Add(tileComponent);
-                        tileComponent.SetPosition(x, y);
+                        //Tile tileComponent = tile.GetComponent<Tile>();
+                        //ActiveTiles.Add(tileComponent);
+                        //tileComponent.SetPosition(x, y);
                         break;
 
                     case 2:
@@ -81,7 +73,13 @@ public class MapFill : MonoBehaviour
                         break;
 
                     case 3:
+                        //Blank set by floodfill
+                        break;
 
+                    case 4:
+                        break;
+
+                    case 5:
                         break;
 
                     default:
@@ -89,6 +87,10 @@ public class MapFill : MonoBehaviour
                 }
             }
         }
+    }
+
+    private void SetTileTextures(int[,] map)
+    {
     }
 
     private void GenerateMap()
@@ -99,10 +101,12 @@ public class MapFill : MonoBehaviour
         {
             map = SmoothMap();
         }
-
-        map = ConnectTunnels(map);
-
-        // tempMap[x, y] = ConnectTunnels(tempMap, x, y);
+        float noOfBlankTiles = (width * height) * (randomFillPercent / 100.0f);
+        if (FloodFill(map, 1, height - 2) <= noOfBlankTiles) //IF FLOODFILL returns less than no of blank tiles
+        {//needs to be changed to a while loop... somehow?
+            Debug.Log(floodNum);
+            map = ConnectTunnels(map);
+        }
         DrawMapTiles();
     }
 
@@ -177,19 +181,14 @@ public class MapFill : MonoBehaviour
 
                 if (neighbouringWalls > 4)
                 {
-                    //for (int i = 0; i < CaveIterations; i++)
-
                     tempMap[x, y] = 1;
                 }
                 else
                 {
                     tempMap[x, y] = 0;
                 }
-                //for (int i = 0; i < CaveIterations; i++)
-                //tempMap[x, y] = ConnectTunnels(tempMap, x, y);
             }
         }
-
         return tempMap;
     }
 
@@ -219,8 +218,8 @@ public class MapFill : MonoBehaviour
     private int[,] ConnectTunnels(int[,] _tempMap)
     {
         int[,] digMap = new int[width, height];
+
         digMap = _tempMap;
-        //int neighbouringWalls = GetSurroundingObjCount(curX, curY);
         for (int x = width - 1; x > 0; x--)
         {
             for (int y = height - 1; y > 0; y--)
@@ -228,46 +227,57 @@ public class MapFill : MonoBehaviour
                 if (map[x, y - 1] == 0)
                 {
                     digMap[x, y] = 0;
+                    if (y + 1 < height)
+                    {
+                        if (map[x, y + 1] == 1)
+                        {
+                            digMap[x, y + 1] = 0;
+                        }
+                    }
                 }
             }
         }
-        //Floodfill Check
-        FloodFill(digMap, 1, height - 1);
 
         return digMap;
     }
 
-    private bool FloodFill(int[,] _map, int curX, int curY)
+    private int FloodFill(int[,] _map, int curX, int curY)
     {
-        if (_map[curX, curY] == 0)
+        if (curX < 0 || curX >= width || curY < 0 || curY >= height) //Bounds check
         {
-            floodNum++; //flooded tiles incrementor
-            if (curX < width)
-                FloodFill(_map, curX + 1, curY);
-            if (curX > 0)
-                FloodFill(_map, curX - 1, curY);
-            if (curY < height)
-                FloodFill(_map, curX, curY + 1);
-            if (curY > 0)
-                FloodFill(_map, curX, curY - 1);
-            return true;
+            return 0;
         }
-        else
-        {
-            return false;
-        }
+
+        if (_map[curX, curY] == 3)
+            return 0;
+        if (_map[curX, curY] != 0)
+            return 0;
+
+        _map[curX, curY] = 3;   //set to replace int
+        floodNum++;             //increment flooded num of tiles
+
+        FloodFill(_map, curX, curY + 1);
+
+        FloodFill(_map, curX - 1, curY);
+
+        FloodFill(_map, curX + 1, curY);
+
+        FloodFill(_map, curX, curY - 1);
+
+        return floodNum;
     }
 
-    private Tile ReturnTile(int x, int y)
+    private void TextureTiles(int[,] _map)
     {
-        foreach (Tile tile in ActiveTiles)
+        for (int x = 0; x < width; x++)
         {
-            if (tile.TileLocation(x, y))
+            for (int y = 0; y < height; y++)
             {
-                return tile;
+                if (_map[x, y] == 1)
+                {
+                }
             }
         }
-        return null;
     }
 }
 

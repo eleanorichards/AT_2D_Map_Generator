@@ -4,9 +4,6 @@ using UnityEngine;
 
 public class Tile : MonoBehaviour
 {
-    public int gCost;
-    public int hCost;
-
     public int localX;
     public int localY;
 
@@ -16,11 +13,6 @@ public class Tile : MonoBehaviour
     private void OnAwake()
     {
         //switch to random of 4 ground textures
-    }
-
-    public int fCost()
-    {
-        return gCost + hCost;
     }
 
     public void SetPosition(int x, int y)
