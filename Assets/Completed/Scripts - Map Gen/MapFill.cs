@@ -102,7 +102,7 @@ public class MapFill : MonoBehaviour
             map = SmoothMap();
         }
         float noOfBlankTiles = (width * height) * (randomFillPercent / 100.0f);
-        if (FloodFill(map, 1, height - 2) <= noOfBlankTiles) //IF FLOODFILL returns less than no of blank tiles
+        while (FloodFill(map, 1, height - 2) <= noOfBlankTiles) //IF FLOODFILL returns less than no of blank tiles
         {//needs to be changed to a while loop... somehow?
             Debug.Log(floodNum);
             map = ConnectTunnels(map);
@@ -220,15 +220,21 @@ public class MapFill : MonoBehaviour
         int[,] digMap = new int[width, height];
 
         digMap = _tempMap;
-        for (int x = width - 1; x > 0; x--)
+        for (int x = width - 2; x > 0; x--)
         {
-            for (int y = height - 1; y > 0; y--)
+            for (int y = height - 2; y > 0; y--)
             {
-                if (map[x, y - 1] == 0)
+                if (map[x, y] == 3)
                 {
-                    digMap[x, y] = 0;
-                    if (y + 1 < height)
+                    map[x, y] = 0;
+                    //RESET anything changed by floodfill
+                }
+                if (map[x, y] == 1) //If solid
+                {
+                    if (map[x, y - 1] == 0) //if below is blank
                     {
+                        digMap[x, y] = 0;
+
                         if (map[x, y + 1] == 1)
                         {
                             digMap[x, y + 1] = 0;
