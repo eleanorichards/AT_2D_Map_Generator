@@ -5,7 +5,7 @@ using UnityEngine;
 public class ProcMapCreation : MonoBehaviour
 {
     // Use this for initialization
-    void Start()
+    private void Start()
     {
         //Could gen 3 at once
         //once middle of middle is reached
@@ -14,11 +14,11 @@ public class ProcMapCreation : MonoBehaviour
     }
 
     // Update is called once per frame
-    void Update()
+    private void Update()
     {
     }
 
-    void OnTriggerEnter2D(Collider2D col)
+    private void OnTriggerEnter2D(Collider2D col)
     {
         /*
          * foreach(tileMap in activeTileMaps)

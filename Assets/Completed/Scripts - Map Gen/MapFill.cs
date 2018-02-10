@@ -18,18 +18,12 @@ public class MapFill : MonoBehaviour
     [Range(0, 90)]
     public float randomFillPercent;
 
-    [Range(0, 10)]
-    public int CaveIterations = 1;
-
-    //public List<Tile> ActiveTiles = new List<Tile>();
-
     private int floodNum = 0;
 
     // Use this for initialization
     private void Start()
     {
         pool = GameObject.Find("TilePooler").GetComponent<ObjectPool>();
-        //GenerateMap();
     }
 
     // Update is called once per frame
@@ -47,29 +41,33 @@ public class MapFill : MonoBehaviour
     {
         pool.DeactivateObject("Tile");
         pool.DeactivateObject("Blank");
-        //ActiveTiles.Clear();
+        pool.DeactivateObject("TopTile");
         for (int x = 0; x < width; x++)
         {
             for (int y = 0; y < height; y++)
             {
                 switch (map[x, y])
                 {
-                    case 0:
+                    case -1:
+                        //floodfill blank
+                        break;
 
+                    case 0:
+                        //normal blank
                         break;
 
                     case 1: //Ground Tile
                         GameObject tile = pool.GetPooledObject("Tile");
                         tile.transform.position = new Vector2(x, y); //Transform.position = this + mapGenerator.x, mapGenerator.y
-
                         tile.SetActive(true);
                         //Tile tileComponent = tile.GetComponent<Tile>();
-                        //ActiveTiles.Add(tileComponent);
                         //tileComponent.SetPosition(x, y);
                         break;
 
-                    case 2:
-
+                    case 2: //Top tile
+                        GameObject TopTile = pool.GetPooledObject("TopTile");
+                        TopTile.transform.position = new Vector2(x, y); //Transform.position = this + mapGenerator.x, mapGenerator.y
+                        TopTile.SetActive(true);
                         break;
 
                     case 3:
@@ -89,10 +87,6 @@ public class MapFill : MonoBehaviour
         }
     }
 
-    private void SetTileTextures(int[,] map)
-    {
-    }
-
     private void GenerateMap()
     {
         map = new int[width, height];
@@ -103,10 +97,11 @@ public class MapFill : MonoBehaviour
         }
         float noOfBlankTiles = (width * height) * (randomFillPercent / 100.0f);
         while (FloodFill(map, 1, height - 2) <= noOfBlankTiles) //IF FLOODFILL returns less than no of blank tiles
-        {//needs to be changed to a while loop... somehow?
+        {
             Debug.Log(floodNum);
             map = ConnectTunnels(map);
         }
+        TextureTiles(map);
         DrawMapTiles();
     }
 
@@ -224,12 +219,12 @@ public class MapFill : MonoBehaviour
         {
             for (int y = height - 2; y > 0; y--)
             {
-                if (map[x, y] == 3)
+                if (map[x, y] == -1)
                 {
                     map[x, y] = 0;
                     //RESET anything changed by floodfill
                 }
-                if (map[x, y] == 1) //If solid
+                if (map[x, y] > 0) //If solid
                 {
                     if (map[x, y - 1] == 0) //if below is blank
                     {
@@ -254,12 +249,12 @@ public class MapFill : MonoBehaviour
             return 0;
         }
 
-        if (_map[curX, curY] == 3)
+        if (_map[curX, curY] == -1)
             return 0;
         if (_map[curX, curY] != 0)
             return 0;
 
-        _map[curX, curY] = 3;   //set to replace int
+        _map[curX, curY] = -1;   //set to replace int
         floodNum++;             //increment flooded num of tiles
 
         FloodFill(_map, curX, curY + 1);
@@ -275,12 +270,30 @@ public class MapFill : MonoBehaviour
 
     private void TextureTiles(int[,] _map)
     {
+        //0 - BLANK
+        //1 - STANDARD DIRT
+        //2 - TOP TILE
+        //3
+        //4
+        //5
+        //6
+        //7
+        //8
+        //9
+        //10
         for (int x = 0; x < width; x++)
         {
             for (int y = 0; y < height; y++)
             {
                 if (_map[x, y] == 1)
                 {
+                    if (y < height - 1)
+                    {
+                        if (_map[x, y + 1] <= 0) //blank
+                        {
+                            map[x, y] = 2;
+                        }
+                    }
                 }
             }
         }

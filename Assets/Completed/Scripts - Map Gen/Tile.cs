@@ -7,11 +7,15 @@ public class Tile : MonoBehaviour
     public int localX;
     public int localY;
 
+    //random tex to choose between
     public Sprite[] tileTex;
 
     // Use this for initialization
-    private void OnAwake()
+    private void Awake()
     {
+        SpriteRenderer rend = GetComponent<SpriteRenderer>();
+        int i = Random.Range(0, 4);
+        rend.sprite = tileTex[i];
         //switch to random of 4 ground textures
     }
 
@@ -19,17 +23,5 @@ public class Tile : MonoBehaviour
     {
         localX = x;
         localY = y;
-    }
-
-    public bool TileLocation(int x, int y)
-    {
-        if (localX == x && localY == y)
-        {
-            return true;
-        }
-        else
-        {
-            return false;
-        }
     }
 }

@@ -43,7 +43,6 @@ public class ObjectPool : MonoBehaviour
                 pooledObject.Add(obj);
             }
         }
-        //GenerateMap();
     }
 
     //Return inactive tiles in the pool
@@ -62,7 +61,7 @@ public class ObjectPool : MonoBehaviour
             {
                 if (item.shouldExpand)
                 {
-                    GameObject obj = (GameObject)Instantiate(item.objectToPool);
+                    GameObject obj = Instantiate(item.objectToPool);
                     obj.SetActive(false);
                     pooledObject.Add(obj);
                     return obj;
