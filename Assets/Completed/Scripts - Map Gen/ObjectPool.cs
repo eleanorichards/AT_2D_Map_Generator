@@ -6,7 +6,9 @@ using UnityEngine;
 [System.Serializable]
 public class ObjectPoolItem
 {
+    [Header("Pool Settings")]
     public GameObject objectToPool;
+
     public bool shouldExpand = true;
     public int poolSize = 100;
     public string itemName = "";
