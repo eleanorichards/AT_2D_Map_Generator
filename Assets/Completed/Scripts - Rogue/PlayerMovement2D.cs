@@ -9,10 +9,10 @@ public class PlayerMovement2D : MonoBehaviour
 
     private Rigidbody2D rig;
 
-    [Range(0.5f, 5.0f)]
+    [Range(0.5f, 15.0f)]
     public float fallMultiplier = 2.5f;
 
-    [Range(0.5f, 5.0f)]
+    [Range(0.5f, 15.0f)]
     public float jumpVelocity = 5.0f;
 
     [Range(0.1f, 2.0f)]

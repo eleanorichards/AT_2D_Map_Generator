@@ -6,13 +6,13 @@ public class ProcMapCreation : MonoBehaviour
 {
     private ObjectPool pool;
 
-    public GameObject[] MapSpawn;
+    public GameObject[] spawnPoints;
 
     // Use this for initialization
     private void Start()
     {
         pool = GameObject.Find("TilePooler").GetComponent<ObjectPool>();
-        GameObject mapSpawn = pool.GetPooledObject("MapSpawn");
+
         //mapSpawn1.instantiate
         //mapSpawn2.transform = mapSawp1 + width;
     }
@@ -29,14 +29,16 @@ public class ProcMapCreation : MonoBehaviour
 
     private void OnTriggerEnter2D(Collider2D col)
     {
-        /*
-         * foreach(tileMap in activeTileMaps)
-         if(leftTile)
-         {
-            foreach tile in tilePool
+        if (col.CompareTag("Player"))
+        {
+            //DEACTIVATE all objects
             pool.DeactivateObject("Tile");
             pool.DeactivateObject("Blank");
+            pool.DeactivateObject("TopTile");
+
+            GameObject mapSpawn = pool.GetPooledObject("MapGenerator");
+            mapSpawn.transform.position = new Vector2(transform.position.x - 10, transform.position.y); //setLocations + mapGeneratorPos
+            mapSpawn.SetActive(true);
         }
-         */
     }
 }

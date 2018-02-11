@@ -26,17 +26,17 @@ public class MapFill : MonoBehaviour
         pool = GameObject.Find("TilePooler").GetComponent<ObjectPool>();
     }
 
-    private void OnAwake()
+    private void OnEnable()
     {
-        //floodNum = 0;
-        //Invoke("GenerateMap()", 1);
-        //Debug.Log("new map...");
+        floodNum = 0;
+        Invoke("GenerateMap", 0.1f);
+        Debug.Log("new map...");
     }
 
     // Update is called once per frame
     private void Update()
     {
-        if (Input.GetButton("Jump"))
+        if (Input.GetKeyDown(KeyCode.R))
         {
             floodNum = 0;
             GenerateMap();
