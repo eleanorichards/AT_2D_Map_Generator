@@ -47,9 +47,9 @@ public class MapFill : MonoBehaviour
     private void DrawMapTiles()
     {
         //DeActivate all active tiles from pool
-        pool.DeactivateObject("Tile");
-        pool.DeactivateObject("Blank");
-        pool.DeactivateObject("TopTile");
+        //pool.DeactivateObject("Tile");
+        //pool.DeactivateObject("Blank");
+        //pool.DeactivateObject("TopTile");
 
         for (int x = 0; x < width; x++)
         {

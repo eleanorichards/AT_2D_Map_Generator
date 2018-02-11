@@ -13,8 +13,10 @@ public class ProcMapCreation : MonoBehaviour
     {
         pool = GameObject.Find("TilePooler").GetComponent<ObjectPool>();
 
-        //mapSpawn1.instantiate
-        //mapSpawn2.transform = mapSawp1 + width;
+        for (int i = 0; i < spawnPoints.Length; i++)
+        {
+            spawnPoints[i].GetComponent<SpawnPoint>().SpawnID = i;
+        }
     }
 
     //Could gen 3 at once
@@ -27,18 +29,23 @@ public class ProcMapCreation : MonoBehaviour
     {
     }
 
+    public void SpawnEntered(int SpawnID)
+    {
+        //DEACTIVATE all objects
+        pool.DeactivateObject("Tile");
+        pool.DeactivateObject("Blank");
+        pool.DeactivateObject("TopTile");
+        pool.DeactivateObject("MapGenerator");
+
+        GameObject mapSpawn = pool.GetPooledObject("MapGenerator");
+
+        mapSpawn.transform.position = new Vector2(spawnPoints[SpawnID].transform.position.x,
+            spawnPoints[SpawnID].transform.position.y);
+
+        mapSpawn.SetActive(true);
+    }
+
     private void OnTriggerEnter2D(Collider2D col)
     {
-        if (col.CompareTag("Player"))
-        {
-            //DEACTIVATE all objects
-            pool.DeactivateObject("Tile");
-            pool.DeactivateObject("Blank");
-            pool.DeactivateObject("TopTile");
-
-            GameObject mapSpawn = pool.GetPooledObject("MapGenerator");
-            mapSpawn.transform.position = new Vector2(transform.position.x - 10, transform.position.y); //setLocations + mapGeneratorPos
-            mapSpawn.SetActive(true);
-        }
     }
 }
