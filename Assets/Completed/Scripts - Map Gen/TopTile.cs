@@ -4,12 +4,19 @@ using UnityEngine;
 
 public class TopTile : MonoBehaviour
 {
+    private SpriteRenderer rend;
+
+    //random tex to choose between
     public Sprite[] tileTex;
 
-    // Use this for initialization
-    private void Awake()
+    private void Start()
     {
-        SpriteRenderer rend = GetComponent<SpriteRenderer>();
+    }
+
+    // Use this for initialization
+    private void OnEnable()
+    {
+        rend = GetComponent<SpriteRenderer>();
         int i = Random.Range(0, tileTex.Length);
         rend.sprite = tileTex[i];
     }

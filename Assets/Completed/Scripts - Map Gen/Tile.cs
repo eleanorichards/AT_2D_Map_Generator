@@ -4,16 +4,22 @@ using UnityEngine;
 
 public class Tile : MonoBehaviour
 {
-    public int localX;
-    public int localY;
+    private int localX;
+    private int localY;
+
+    private SpriteRenderer rend;
 
     //random tex to choose between
     public Sprite[] tileTex;
 
-    // Use this for initialization
-    private void Awake()
+    private void Start()
     {
-        SpriteRenderer rend = GetComponent<SpriteRenderer>();
+    }
+
+    // Use this for initialization
+    private void OnEnable()
+    {
+        rend = GetComponent<SpriteRenderer>();
         int i = Random.Range(0, tileTex.Length);
         rend.sprite = tileTex[i];
         //switch to random of 4 ground textures

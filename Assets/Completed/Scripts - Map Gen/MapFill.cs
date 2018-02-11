@@ -26,6 +26,13 @@ public class MapFill : MonoBehaviour
         pool = GameObject.Find("TilePooler").GetComponent<ObjectPool>();
     }
 
+    private void OnAwake()
+    {
+        //floodNum = 0;
+        //Invoke("GenerateMap()", 1);
+        //Debug.Log("new map...");
+    }
+
     // Update is called once per frame
     private void Update()
     {
@@ -39,9 +46,11 @@ public class MapFill : MonoBehaviour
 
     private void DrawMapTiles()
     {
+        //DeActivate all active tiles from pool
         pool.DeactivateObject("Tile");
         pool.DeactivateObject("Blank");
         pool.DeactivateObject("TopTile");
+
         for (int x = 0; x < width; x++)
         {
             for (int y = 0; y < height; y++)
@@ -58,7 +67,7 @@ public class MapFill : MonoBehaviour
 
                     case 1: //Ground Tile
                         GameObject tile = pool.GetPooledObject("Tile");
-                        tile.transform.position = new Vector2(x, y); //Transform.position = this + mapGenerator.x, mapGenerator.y
+                        tile.transform.position = new Vector2(x, y) + new Vector2(transform.position.x, transform.position.y); //setLocations + mapGeneratorPos
                         tile.SetActive(true);
                         //Tile tileComponent = tile.GetComponent<Tile>();
                         //tileComponent.SetPosition(x, y);
@@ -66,7 +75,7 @@ public class MapFill : MonoBehaviour
 
                     case 2: //Top tile
                         GameObject TopTile = pool.GetPooledObject("TopTile");
-                        TopTile.transform.position = new Vector2(x, y); //Transform.position = this + mapGenerator.x, mapGenerator.y
+                        TopTile.transform.position = new Vector2(x, y) + new Vector2(transform.position.x, transform.position.y); //setLocations + mapGeneratorPos
                         TopTile.SetActive(true);
                         break;
 
@@ -300,7 +309,7 @@ public class MapFill : MonoBehaviour
     }
 }
 
-/*
+/* DISCARDED A* ALGORITHM
  //map = 1 = tile
         //map = 0 = blank
         List<Tile> openList = new List<Tile>();
