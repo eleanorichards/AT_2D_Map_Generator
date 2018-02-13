@@ -47,9 +47,9 @@ public class MapFill : MonoBehaviour
     private void DrawMapTiles()
     {
         //DeActivate all active tiles from pool
-        //pool.DeactivateObject("Tile");
-        //pool.DeactivateObject("Blank");
-        //pool.DeactivateObject("TopTile");
+        pool.DeactivateObject("Tile");
+        pool.DeactivateObject("Blank");
+        pool.DeactivateObject("TopTile");
 
         for (int x = 0; x < width; x++)
         {
@@ -69,6 +69,7 @@ public class MapFill : MonoBehaviour
                         GameObject tile = pool.GetPooledObject("Tile");
                         tile.transform.position = new Vector2(x, y) + new Vector2(transform.position.x, transform.position.y); //setLocations + mapGeneratorPos
                         tile.SetActive(true);
+                        tile.transform.SetParent(this.transform); //Set this map fill obj as parent
                         //Tile tileComponent = tile.GetComponent<Tile>();
                         //tileComponent.SetPosition(x, y);
                         break;
@@ -77,6 +78,7 @@ public class MapFill : MonoBehaviour
                         GameObject TopTile = pool.GetPooledObject("TopTile");
                         TopTile.transform.position = new Vector2(x, y) + new Vector2(transform.position.x, transform.position.y); //setLocations + mapGeneratorPos
                         TopTile.SetActive(true);
+                        TopTile.transform.SetParent(this.transform);
                         break;
 
                     case 3:
@@ -111,6 +113,12 @@ public class MapFill : MonoBehaviour
             map = ConnectTunnels(map);
         }
         TextureTiles(map);
+        DrawMapTiles();
+    }
+
+    public void UserMapEdit(int x, int y)
+    {
+        map[x, y] = 0;
         DrawMapTiles();
     }
 

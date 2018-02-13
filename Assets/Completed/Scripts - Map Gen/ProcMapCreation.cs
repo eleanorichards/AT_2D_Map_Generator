@@ -38,14 +38,10 @@ public class ProcMapCreation : MonoBehaviour
         pool.DeactivateObject("MapGenerator");
 
         GameObject mapSpawn = pool.GetPooledObject("MapGenerator");
-
+        mapSpawn.GetComponent<MapFill>().seed++;
         mapSpawn.transform.position = new Vector2(spawnPoints[SpawnID].transform.position.x,
             spawnPoints[SpawnID].transform.position.y);
 
         mapSpawn.SetActive(true);
-    }
-
-    private void OnTriggerEnter2D(Collider2D col)
-    {
     }
 }
