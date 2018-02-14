@@ -6,6 +6,8 @@ public class ProcMapCreation : MonoBehaviour
 {
     private ObjectPool pool;
     private int seedNum = 0;
+    private int mapIndex = 0;
+
     public GameObject[] spawnPoints;
     private List<GameObject> objList = new List<GameObject>();
 
@@ -36,21 +38,30 @@ public class ProcMapCreation : MonoBehaviour
         GameObject mapSpawn = pool.GetPooledObject("MapGenerator");
         if (!mapSpawn)
             return;
-        mapSpawn.GetComponent<MapFill>().seed = seedNum;
+        MapFill mapfill = mapSpawn.GetComponent<MapFill>();
+        mapfill.seed = seedNum;
+        mapfill.spawnIndex = mapIndex;
         mapSpawn.transform.position = new Vector3(spawnPoints[SpawnID].transform.position.x,
             spawnPoints[SpawnID].transform.position.y, 0.0f);
         mapSpawn.SetActive(true);
-
         objList = pool.ReturnActiveObjects("MapGenerator");
 
-        if (objList.Count > 2)
+        foreach (GameObject map in objList)
         {
-            //DEACTIVATE all objects
-            //    objList[0].gameObject.SetActive(false);
-            // objList.RemoveAt(0);
+            if (map.GetComponent<MapFill>().spawnIndex == mapIndex - 3)
+            {
+                map.SetActive(false);
+            }
         }
+        //  if (objList.Count > 2)
+        // {
+        //DEACTIVATE all objects
+        //    objList[0].gameObject.SetActive(false);
+        // objList.RemoveAt(0);
+        //  }
         // objList.Clear();
         // objList = pool.ReturnActiveObjects("MapGenerator");
         seedNum++;
+        mapIndex++;
     }
 }

@@ -12,6 +12,7 @@ public class MapFill : MonoBehaviour
     public int smoothIterations = 0;
 
     public int seed = 0;
+    public int spawnIndex = 0;
     public bool Cave;
     private int[,] map;
 
@@ -111,6 +112,9 @@ public class MapFill : MonoBehaviour
 
     public void UserMapEdit(int x, int y)
     {
+        pool.DeactivateObject("Tile");
+        pool.DeactivateObject("TopTile");
+
         map[x, y] = 0;
         DrawMapTiles();
     }
