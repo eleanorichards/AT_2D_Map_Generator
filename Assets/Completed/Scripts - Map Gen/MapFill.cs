@@ -41,9 +41,8 @@ public class MapFill : MonoBehaviour
         {
             return;
         }
-        //pool.DeactivateObject("Tile");
-        //pool.DeactivateObject("Blank");
-        //pool.DeactivateObject("TopTile");
+        pool.DeactivateObject("Tile");
+        pool.DeactivateObject("TopTile");
 
         for (int x = 0; x < width; x++)
         {
@@ -76,7 +75,7 @@ public class MapFill : MonoBehaviour
                         break;
 
                     case 3:
-                        //Blank set by floodfill
+                        //Treasure
                         break;
 
                     case 4:
@@ -112,9 +111,6 @@ public class MapFill : MonoBehaviour
 
     public void UserMapEdit(int x, int y)
     {
-        pool.DeactivateObject("Tile");
-        pool.DeactivateObject("TopTile");
-
         map[x, y] = 0;
         DrawMapTiles();
     }
