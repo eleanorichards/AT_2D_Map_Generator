@@ -33,23 +33,16 @@ public class MapFill : MonoBehaviour
         Debug.Log("new map...");
     }
 
-    // Update is called once per frame
-    private void Update()
-    {
-        if (Input.GetKeyDown(KeyCode.R))
-        {
-            floodNum = 0;
-            GenerateMap();
-            Debug.Log("new map...");
-        }
-    }
-
     private void DrawMapTiles()
     {
         //DeActivate all active tiles from pool
-        pool.DeactivateObject("Tile");
-        pool.DeactivateObject("Blank");
-        pool.DeactivateObject("TopTile");
+        if (!pool)
+        {
+            return;
+        }
+        //pool.DeactivateObject("Tile");
+        //pool.DeactivateObject("Blank");
+        //pool.DeactivateObject("TopTile");
 
         for (int x = 0; x < width; x++)
         {

@@ -12,6 +12,8 @@ public class PlayerMovement2D : MonoBehaviour
     [Range(0.5f, 15.0f)]
     public float fallMultiplier = 2.5f;
 
+    public float maxSpeed = 0.0f;
+
     [Range(0.5f, 15.0f)]
     public float jumpVelocity = 5.0f;
 
@@ -49,7 +51,11 @@ public class PlayerMovement2D : MonoBehaviour
         if (!IsGrounded())
         {
             //horizontal movement
-            rig.AddForce(moveDirection * walkMultiplier, ForceMode2D.Impulse);
+
+            if (rig.velocity.magnitude < maxSpeed)
+            {
+                rig.AddForce(moveDirection * walkMultiplier, ForceMode2D.Impulse);
+            }
         }
     }
 

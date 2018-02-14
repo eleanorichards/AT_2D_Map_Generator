@@ -84,19 +84,19 @@ public class ObjectPool : MonoBehaviour
         }
     }
 
-    public List<Tile> ReturnActiveTiles(string tag)
+    public List<GameObject> ReturnActiveObjects(string tag)
     {
-        List<Tile> tiles = new List<Tile>();
-
+        List<GameObject> objList = new List<GameObject>();
+        // int objNum = 0;
         for (int i = 0; i < pooledObject.Count; i++)
         {
             if (pooledObject[i].activeInHierarchy && pooledObject[i].CompareTag(tag))
             {
-                tiles.Add(pooledObject[i].GetComponent<Tile>());
+                objList.Add(pooledObject[i]);
             }
         }
-
-        return tiles;
+        //objList.Sort();
+        return objList;
     }
 }
 

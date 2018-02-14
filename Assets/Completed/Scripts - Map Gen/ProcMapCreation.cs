@@ -5,8 +5,9 @@ using UnityEngine;
 public class ProcMapCreation : MonoBehaviour
 {
     private ObjectPool pool;
-
+    private int seedNum = 0;
     public GameObject[] spawnPoints;
+    private List<GameObject> objList = new List<GameObject>();
 
     // Use this for initialization
     private void Start()
@@ -31,17 +32,25 @@ public class ProcMapCreation : MonoBehaviour
 
     public void SpawnEntered(int SpawnID)
     {
-        //DEACTIVATE all objects
-        pool.DeactivateObject("Tile");
-        pool.DeactivateObject("Blank");
-        pool.DeactivateObject("TopTile");
-        pool.DeactivateObject("MapGenerator");
-
+        objList.Clear();
         GameObject mapSpawn = pool.GetPooledObject("MapGenerator");
-        mapSpawn.GetComponent<MapFill>().seed++;
-        mapSpawn.transform.position = new Vector2(spawnPoints[SpawnID].transform.position.x,
-            spawnPoints[SpawnID].transform.position.y);
-
+        if (!mapSpawn)
+            return;
+        mapSpawn.GetComponent<MapFill>().seed = seedNum;
+        mapSpawn.transform.position = new Vector3(spawnPoints[SpawnID].transform.position.x,
+            spawnPoints[SpawnID].transform.position.y, 0.0f);
         mapSpawn.SetActive(true);
+
+        objList = pool.ReturnActiveObjects("MapGenerator");
+
+        if (objList.Count > 2)
+        {
+            //DEACTIVATE all objects
+            //    objList[0].gameObject.SetActive(false);
+            // objList.RemoveAt(0);
+        }
+        // objList.Clear();
+        // objList = pool.ReturnActiveObjects("MapGenerator");
+        seedNum++;
     }
 }
