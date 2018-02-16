@@ -10,13 +10,13 @@ public class MouseControl : MonoBehaviour
     // Use this for initialization
     private void Start()
     {
-        cam = GameObject.Find("Main Camera").GetComponent<Camera>();
+        cam = GetComponent<Camera>();
         tileHoverIcon.SetActive(false);
         //MAPFILL
     }
 
     // Update is called once per frame
-    private void Update()
+    private void FixedUpdate()
     {
         Ray ray = cam.ScreenPointToRay(Input.mousePosition);
 

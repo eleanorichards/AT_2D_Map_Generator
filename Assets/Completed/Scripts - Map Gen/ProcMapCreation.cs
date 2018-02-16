@@ -7,19 +7,15 @@ public class ProcMapCreation : MonoBehaviour
     private ObjectPool pool;
     private int seedNum = 0;
     private int mapIndex = 0;
-
-    public GameObject[] spawnPoints;
     private List<GameObject> objList = new List<GameObject>();
+
+    public List<GameObject> spawnPoints = new List<GameObject>();
+    public GameObject newColliderPrefab;
 
     // Use this for initialization
     private void Start()
     {
         pool = GameObject.Find("TilePooler").GetComponent<ObjectPool>();
-
-        for (int i = 0; i < spawnPoints.Length; i++)
-        {
-            spawnPoints[i].GetComponent<SpawnPoint>().SpawnID = i;
-        }
     }
 
     //Could gen 3 at once
@@ -27,13 +23,18 @@ public class ProcMapCreation : MonoBehaviour
     //disable 1st
     //create new after 3rd
 
-    // Update is called once per frame
-    private void Update()
-    {
-    }
-
     public void SpawnEntered(int SpawnID)
     {
+        //Create next collider in sequence (+ width which is currently 60)
+        GameObject spawnCollider = Instantiate(newColliderPrefab);
+        spawnPoints.Add(spawnCollider);
+        spawnCollider.GetComponent<SpawnPoint>().SetID(spawnPoints.Count);
+        spawnCollider.transform.position = spawnPoints[spawnPoints.Count - 1].transform.position + new Vector3(60, 0, 0);
+        spawnCollider.transform.SetParent(this.gameObject.transform);
+
+        for (int i = 0; i < spawnPoints.Count; i++)
+        {
+        }
         objList.Clear();
         GameObject mapSpawn = pool.GetPooledObject("MapGenerator");
         if (!mapSpawn)

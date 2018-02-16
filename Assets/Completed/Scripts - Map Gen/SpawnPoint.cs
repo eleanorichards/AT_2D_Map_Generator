@@ -12,7 +12,12 @@ public class SpawnPoint : MonoBehaviour
     {
         if (col.CompareTag("Player"))
         {
-            SendMessageUpwards("SpawnEntered", SpawnID);
+            SendMessageUpwards("SpawnEntered", SpawnID); //CALLING A LOT MORE THAN ONCE
         }
+    }
+
+    public void SetID(int ID)
+    {
+        SpawnID = ID;
     }
 }

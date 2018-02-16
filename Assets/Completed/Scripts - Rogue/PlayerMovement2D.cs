@@ -8,6 +8,8 @@ public class PlayerMovement2D : MonoBehaviour
     public LayerMask IgnoreMask;
 
     private Rigidbody2D rig;
+    private Animator anim;
+    private SpriteRenderer rend;
 
     [Range(0.5f, 15.0f)]
     public float fallMultiplier = 2.5f;
@@ -27,6 +29,8 @@ public class PlayerMovement2D : MonoBehaviour
     private void Start()
     {
         rig = GetComponent<Rigidbody2D>();
+        anim = GetComponent<Animator>();
+        rend = GetComponent<SpriteRenderer>();
     }
 
     // Update is called once per frame
@@ -48,7 +52,7 @@ public class PlayerMovement2D : MonoBehaviour
         {
             rig.AddForce(Vector2.up * Physics2D.gravity.y * (fallMultiplier) * Time.deltaTime, ForceMode2D.Impulse);
         }
-        if (!IsGrounded())
+        if (IsGrounded())
         {
             //horizontal movement
 
@@ -68,6 +72,14 @@ public class PlayerMovement2D : MonoBehaviour
         }
 
         moveDirection = new Vector2((Input.GetAxis("Horizontal")), 0);
+        if (moveDirection.x > 0)
+        {
+            rend.flipX = false;
+        }
+        if (moveDirection.x < 0)
+        {
+            rend.flipX = true;
+        }
     }
 
     private bool IsGrounded()
