@@ -4,7 +4,7 @@ using UnityEngine;
 
 public class SpawnPoint : MonoBehaviour
 {
-    public int SpawnID;
+    public int SpawnID = 1;
 
     // Update is called once per frame
 
