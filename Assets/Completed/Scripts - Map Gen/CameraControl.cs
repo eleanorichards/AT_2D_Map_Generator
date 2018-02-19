@@ -41,7 +41,7 @@ public class CameraControl : MonoBehaviour
         float scroll = Input.GetAxis("Mouse ScrollWheel");
         if (scroll != 0.0f)
         {
-            targetOrtho -= scroll * zoomSpeed;
+            targetOrtho -= scroll;
             targetOrtho = Mathf.Clamp(targetOrtho, minOrtho, maxOrtho);
         }
 

@@ -5,7 +5,6 @@ using UnityEngine;
 public class PlayerMovement2D : MonoBehaviour
 {
     public LayerMask GroundMask;
-    public LayerMask IgnoreMask;
 
     private Rigidbody2D rig;
     private Animator anim;
@@ -25,12 +24,17 @@ public class PlayerMovement2D : MonoBehaviour
     [SerializeField]
     private Vector2 moveDirection;
 
+    private Transform topLeft;
+    private Transform bottomRight;
+
     // Use this for initialization
     private void Start()
     {
         rig = GetComponent<Rigidbody2D>();
         anim = GetComponent<Animator>();
         rend = GetComponent<SpriteRenderer>();
+        topLeft = GameObject.Find("TopLeft").gameObject.transform;
+        bottomRight = GameObject.Find("BottomRight").gameObject.transform;
     }
 
     // Update is called once per frame
@@ -52,23 +56,23 @@ public class PlayerMovement2D : MonoBehaviour
         {
             rig.AddForce(Vector2.up * Physics2D.gravity.y * (fallMultiplier) * Time.deltaTime, ForceMode2D.Impulse);
         }
-        if (IsGrounded())
+        //Horizontal movement
+        if (rig.velocity.magnitude < maxSpeed)
         {
-            //horizontal movement
-
-            if (rig.velocity.magnitude < maxSpeed)
-            {
-                rig.AddForce(moveDirection * walkMultiplier, ForceMode2D.Impulse);
-            }
+            rig.AddForce(moveDirection * walkMultiplier, ForceMode2D.Impulse);
         }
     }
 
     private void TakeInput()
     {
-        //Jump Input
-        if (Input.GetButtonDown("Jump"))
+        if (IsGrounded())
         {
-            rig.AddForce(Vector2.up * jumpVelocity, ForceMode2D.Impulse);
+            //horizontal movement
+            //Jump Input
+            if (Input.GetButtonDown("Jump"))
+            {
+                rig.AddForce(Vector2.up * jumpVelocity, ForceMode2D.Impulse);
+            }
         }
 
         moveDirection = new Vector2((Input.GetAxis("Horizontal")), 0);
@@ -84,6 +88,7 @@ public class PlayerMovement2D : MonoBehaviour
 
     private bool IsGrounded()
     {
-        return Physics2D.OverlapArea(transform.position, transform.position, GroundMask);
+        return Physics2D.OverlapArea(topLeft.position, bottomRight.position, GroundMask);
+        // return Physics2D.OverlapAreaNonAlloc(topLeft.position, bottomRight.position, transform.collider2D, GroundMask);
     }
 }

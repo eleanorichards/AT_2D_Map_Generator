@@ -19,9 +19,9 @@ public class Tile : MonoBehaviour
     // Use this for initialization
     private void OnEnable()
     {
-        rend = GetComponent<SpriteRenderer>();
-        int i = Random.Range(0, tileTex.Length);
-        rend.sprite = tileTex[i];
+        //rend = GetComponent<SpriteRenderer>();
+        //int i = Random.Range(0, tileTex.Length);
+        //rend.sprite = tileTex[i];
         //switch to random of 4 ground textures
     }
 

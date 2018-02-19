@@ -4,6 +4,15 @@ using UnityEngine;
 
 public class MapFill : MonoBehaviour
 {
+    public enum TileType
+    {
+        BLANK,
+        GROUND,
+        TOPGROUND
+    }
+
+    public TileType tileType;
+
     private ObjectPool pool;
     public int width = 0;
     public int height = 0;
@@ -20,6 +29,8 @@ public class MapFill : MonoBehaviour
     public float randomFillPercent;
 
     private int floodNum = 0;
+    private GameObject tile;
+    public Sprite[] tileSprites;
 
     // Use this for initialization
     private void Start()
@@ -34,6 +45,28 @@ public class MapFill : MonoBehaviour
         Debug.Log("new map...");
     }
 
+    public void Dropdown_tileTypeChanged(int selected)
+    {
+        switch (selected)
+        {
+            case 0:
+                tileType = TileType.GROUND;
+                break;
+
+            case 1:
+                tileType = TileType.TOPGROUND;
+
+                break;
+
+            case 2:
+                tileType = TileType.BLANK;
+                break;
+
+            default:
+                break;
+        }
+    }
+
     private void DrawMapTiles()
     {
         //DeActivate all active tiles from pool
@@ -42,7 +75,6 @@ public class MapFill : MonoBehaviour
             return;
         }
         pool.DeactivateObject("Tile");
-        pool.DeactivateObject("TopTile");
 
         for (int x = 0; x < width; x++)
         {
@@ -51,27 +83,27 @@ public class MapFill : MonoBehaviour
                 switch (map[x, y])
                 {
                     case -1:
-                        //floodfill blank
                         break;
 
                     case 0:
-                        //normal blank
                         break;
 
                     case 1: //Ground Tile
-                        GameObject tile = pool.GetPooledObject("Tile");
+                        tile = pool.GetPooledObject("Tile");
                         tile.transform.position = new Vector2(x, y) + new Vector2(transform.position.x, transform.position.y); //setLocations + mapGeneratorPos
                         tile.SetActive(true);
+                        //Sprite switching
+                        int i = Random.Range(0, 3);
+                        tile.GetComponent<SpriteRenderer>().sprite = tileSprites[i];
                         tile.transform.SetParent(this.transform); //Set this map fill obj as parent
-                        //Tile tileComponent = tile.GetComponent<Tile>();
-                        //tileComponent.SetPosition(x, y);
                         break;
 
-                    case 2: //Top tile
-                        GameObject TopTile = pool.GetPooledObject("TopTile");
-                        TopTile.transform.position = new Vector2(x, y) + new Vector2(transform.position.x, transform.position.y); //setLocations + mapGeneratorPos
-                        TopTile.SetActive(true);
-                        TopTile.transform.SetParent(this.transform);
+                    case 2://Top tile
+                        tile = pool.GetPooledObject("Tile");
+                        tile.transform.position = new Vector2(x, y) + new Vector2(transform.position.x, transform.position.y); //setLocations + mapGeneratorPos
+                        tile.SetActive(true);
+                        tile.GetComponent<SpriteRenderer>().sprite = tileSprites[4];
+                        tile.transform.SetParent(this.transform); //Set this map fill obj as parent
                         break;
 
                     case 3:
@@ -87,6 +119,21 @@ public class MapFill : MonoBehaviour
                     default:
                         break;
                 }
+            }
+        }
+    }
+
+    private void DeactivateTile(int _x, int _y)
+    {
+        List<GameObject> tiles = new List<GameObject>();
+        tiles = pool.ReturnActiveObjects("Tile");
+
+        foreach (GameObject tile in tiles)
+        {
+            if (tile.transform.position == new Vector3(_x, _y, 0))
+            {
+                tile.SetActive(false);
+                // map[_x, _y] == tileType
             }
         }
     }
@@ -109,9 +156,36 @@ public class MapFill : MonoBehaviour
         DrawMapTiles();
     }
 
-    public void UserMapEdit(int x, int y)
+    public void UserMapEdit(int _x, int _y)
     {
-        map[x, y] = 0;
+        List<GameObject> tiles = new List<GameObject>();
+        tiles = pool.ReturnActiveObjects("Tile");
+
+        foreach (GameObject tile in tiles)
+        {
+            if (tile.transform.position == new Vector3(_x, _y, 0))
+            {
+                tile.SetActive(false);
+            }
+        }
+
+        switch (tileType)
+        {
+            case TileType.BLANK:
+                map[_x, _y] = 0;
+                break;
+
+            case TileType.GROUND:
+                map[_x, _y] = 1;
+                break;
+
+            case TileType.TOPGROUND:
+                map[_x, _y] = 2;
+                break;
+
+            default:
+                break;
+        }
         DrawMapTiles();
     }
 
