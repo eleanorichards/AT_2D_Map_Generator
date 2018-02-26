@@ -11,27 +11,40 @@ public class MouseControl : MonoBehaviour
     private GameObject bullet;
     private GameObject gun;
     private ObjectPool pool;
+    private GameObject player;
 
     // Use this for initialization
     private void Start()
     {
+        player = GameObject.Find("Player 1");
         cam = GetComponent<Camera>();
         canvas = GameObject.Find("Canvas").GetComponent<Canvas>();
         pool = GameObject.Find("TilePooler").GetComponent<ObjectPool>();
         gun = GameObject.Find("Gun");
+        tileHoverIcon.SetActive(false);
+
         //MAPFILL
     }
 
     // Update is called once per frame
     private void FixedUpdate()
     {
+        Ray ray = cam.ScreenPointToRay(Input.mousePosition);
+
+        Vector2 origin = new Vector2(cam.ScreenToWorldPoint(Input.mousePosition).x, cam.ScreenToWorldPoint(Input.mousePosition).y);
+        RaycastHit2D hitToolBox = Physics2D.Raycast(origin, Vector2.zero, 0f, 1 << LayerMask.NameToLayer("UI"));
+
+        if (hitToolBox)
+        {
+        }
+
         if (editMode)
         {
             tileHoverIcon.transform.position = cam.ScreenToWorldPoint(Input.mousePosition);
 
-            Ray ray = cam.ScreenPointToRay(Input.mousePosition);
+            //Ray ray = cam.ScreenPointToRay(Input.mousePosition);
 
-            Vector2 origin = new Vector2(cam.ScreenToWorldPoint(Input.mousePosition).x, cam.ScreenToWorldPoint(Input.mousePosition).y);
+            //Vector2 origin = new Vector2(cam.ScreenToWorldPoint(Input.mousePosition).x, cam.ScreenToWorldPoint(Input.mousePosition).y);
             RaycastHit2D hit = Physics2D.Raycast(origin, Vector2.zero, 0f, 1 << LayerMask.NameToLayer("Ground"));
 
             if (hit)
@@ -72,11 +85,15 @@ public class MouseControl : MonoBehaviour
         editMode = !editMode;
         if (editMode)
         {
+            cam.transform.SetParent(null);
+            player.SetActive(false);
             tileHoverIcon.SetActive(true);
         }
         else
         {
+            player.SetActive(true);
             tileHoverIcon.SetActive(false);
+            cam.transform.SetParent(player.transform);
         }
     }
 }

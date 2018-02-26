@@ -110,7 +110,8 @@ public class ObjectPool : MonoBehaviour
                     }
                     else
                     {
-                        map[x, y] = rndSeed.Next(0, 100);
+                        map[x, y] = rnd
+                        .Next(0, 100);
                         if (map[x, y] < randomFillPercent)
                         {
                             GameObject tile = GetPooledObject("Tile");

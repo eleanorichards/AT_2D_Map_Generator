@@ -41,8 +41,9 @@ public class MapFill : MonoBehaviour
     private void OnEnable()
     {
         floodNum = 0;
-        Invoke("GenerateMap", 0.1f);
-        Debug.Log("new map...");
+
+        Invoke("GenerateMap", 0.0f);
+        Debug.Log("new map..." + seed);
     }
 
     public void Dropdown_tileTypeChanged(int selected)
@@ -74,7 +75,7 @@ public class MapFill : MonoBehaviour
         {
             return;
         }
-        pool.DeactivateObject("Tile");
+        // pool.DeactivateObject("Tile");
 
         for (int x = 0; x < width; x++)
         {
@@ -381,6 +382,19 @@ public class MapFill : MonoBehaviour
                 }
             }
         }
+    }
+
+    public int[,] GetMap()
+    {
+        int[,] tempMap = new int[width, height];
+        tempMap = map;
+        return tempMap;
+    }
+
+    public void SetMap(int[,] _newMap)
+    {
+        map = _newMap;
+        DrawMapTiles();
     }
 }
 
