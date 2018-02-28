@@ -26,6 +26,9 @@ public class PlayerMovement2D : MonoBehaviour
 
     private Transform topLeft;
     private Transform bottomRight;
+    private GameObject bullet;
+    private GameObject gun;
+    private ObjectPool pool;
 
     // Use this for initialization
     private void Start()
@@ -35,6 +38,8 @@ public class PlayerMovement2D : MonoBehaviour
         rend = GetComponent<SpriteRenderer>();
         topLeft = GameObject.Find("TopLeft").gameObject.transform;
         bottomRight = GameObject.Find("BottomRight").gameObject.transform;
+        gun = GameObject.Find("Gun");
+        pool = GameObject.Find("TilePooler").GetComponent<ObjectPool>();
     }
 
     // Update is called once per frame
@@ -83,6 +88,13 @@ public class PlayerMovement2D : MonoBehaviour
         if (moveDirection.x < 0)
         {
             rend.flipX = true;
+        }
+
+        if (Input.GetKeyDown(KeyCode.Mouse0))
+        {
+            bullet = pool.GetPooledObject("Bullet");
+            bullet.transform.position = gun.transform.position;
+            bullet.SetActive(true);
         }
     }
 

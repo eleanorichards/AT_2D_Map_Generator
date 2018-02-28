@@ -5,14 +5,14 @@ using UnityEngine;
 public class ProcMapCreation : MonoBehaviour
 {
     private ObjectPool pool;
-    private int seedNum = 0;
+    public int seedNum = 0;
     private int mapIndex = 0;
     private List<GameObject> objList = new List<GameObject>();
 
     public List<GameObject> spawnPoints = new List<GameObject>();
     public GameObject newColliderPrefab;
 
-    private int spawnPos = 0;
+    private int spawnPos = 60;
 
     // Use this for initialization
     private void Start()
@@ -50,7 +50,7 @@ public class ProcMapCreation : MonoBehaviour
 
         foreach (GameObject map in objList)
         {
-            if (map.GetComponent<MapFill>().spawnIndex == mapIndex - 3)
+            if (map.GetComponent<MapFill>().spawnIndex == SpawnID - 3)
             {
                 map.SetActive(false);
             }
