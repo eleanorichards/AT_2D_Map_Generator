@@ -28,9 +28,16 @@ public class EditorMapFill : MonoBehaviour
         GenerateMap();
     }
 
-    // Update is called once per frame
-    private void Update()
+    public void SetWidth(string _width)
     {
+        width = System.Convert.ToInt32(_width);
+        GenerateMap();
+    }
+
+    public void SetHeight(string _height)
+    {
+        height = System.Convert.ToInt32(_height);
+        GenerateMap();
     }
 
     private void GenerateMap()
@@ -142,6 +149,8 @@ public class EditorMapFill : MonoBehaviour
 
                     default:
                         break;
+
+                        //tile.transform.position.z -= 3.0f;
                 }
             }
         }
@@ -158,5 +167,11 @@ public class EditorMapFill : MonoBehaviour
     {
         map = _newMap;
         DrawMapTiles();
+    }
+
+    public void SetMapDimensions(int _width, int _height)
+    {
+        width = _width;
+        height = _height;
     }
 }

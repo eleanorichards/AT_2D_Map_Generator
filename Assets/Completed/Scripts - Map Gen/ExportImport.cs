@@ -43,7 +43,7 @@ public class ExportImport : MonoBehaviour
 
         file = File.Create(fileName);
 
-        data = new GameData(map, fileName);
+        data = new GameData(map, fileName, mapInfo.width, mapInfo.height);
         BinaryFormatter bf = new BinaryFormatter();
         bf.Serialize(file, data);
         file.Close();
@@ -67,6 +67,7 @@ public class ExportImport : MonoBehaviour
         file.Close();
 
         map = data.map;
+        mapInfo.SetMapDimensions(data.width, data.height);
         mapInfo.SetMap(map);
 
         string currentName = data.fileName;

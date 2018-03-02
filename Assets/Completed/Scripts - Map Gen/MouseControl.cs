@@ -34,7 +34,7 @@ public class MouseControl : MonoBehaviour
 
         Ray ray = cam.ScreenPointToRay(new Vector3(Input.mousePosition.x, Input.mousePosition.y, cam.farClipPlane));
 
-        RaycastHit2D hit = Physics2D.Raycast(ray.origin, ray.direction, Mathf.Infinity);
+        RaycastHit2D hit = Physics2D.Raycast(ray.origin, ray.direction, Mathf.Infinity, 1 << LayerMask.NameToLayer("Ground"));
         Debug.DrawRay(origin, ray.direction, Color.red);
         // RaycastHit hit;
 
