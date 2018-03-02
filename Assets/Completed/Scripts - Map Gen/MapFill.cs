@@ -383,19 +383,6 @@ public class MapFill : MonoBehaviour
             }
         }
     }
-
-    public int[,] GetMap()
-    {
-        int[,] tempMap = new int[width, height];
-        tempMap = map;
-        return tempMap;
-    }
-
-    public void SetMap(int[,] _newMap)
-    {
-        map = _newMap;
-        DrawMapTiles();
-    }
 }
 
 /* DISCARDED A* ALGORITHM

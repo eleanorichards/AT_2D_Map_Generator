@@ -25,6 +25,7 @@ public class EditorMapFill : MonoBehaviour
     private void Start()
     {
         pool = GameObject.Find("TilePooler").GetComponent<ObjectPool>();
+        GenerateMap();
     }
 
     // Update is called once per frame
@@ -35,22 +36,30 @@ public class EditorMapFill : MonoBehaviour
     private void GenerateMap()
     {
         map = new int[width, height];
-
+        for (int x = 0; x < width; x++)
+        {
+            for (int y = 0; y < height; y++)
+            {
+                map[x, y] = 1; //POPULATE WITH BLANK TILES
+            }
+        }
         DrawMapTiles();
     }
 
     public void UserMapEdit(int _x, int _y)
     {
         List<GameObject> tiles = new List<GameObject>();
+        List<GameObject> blanks = new List<GameObject>();
         tiles = pool.ReturnActiveObjects("Tile");
+        blanks = pool.ReturnActiveObjects("Blank");
 
-        foreach (GameObject tile in tiles)
-        {
-            if (tile.transform.position == new Vector3(_x, _y, 0))
-            {
-                tile.SetActive(false);
-            }
-        }
+        //foreach (GameObject tile in tiles)
+        //{
+        //    if (tile.transform.position == new Vector3(_x, _y, 0))
+        //    {
+        //        tile.SetActive(false);
+        //    }
+        //}
 
         switch (tileType)
         {
@@ -72,6 +81,8 @@ public class EditorMapFill : MonoBehaviour
         DrawMapTiles();
     }
 
+    //should probs change this to do 1 at a time
+
     private void DrawMapTiles()
     {
         //DeActivate all active tiles from pool
@@ -79,7 +90,8 @@ public class EditorMapFill : MonoBehaviour
         {
             return;
         }
-        // pool.DeactivateObject("Tile");
+        pool.DeactivateObject("Tile");
+        pool.DeactivateObject("Blank");
 
         for (int x = 0; x < width; x++)
         {
@@ -91,6 +103,13 @@ public class EditorMapFill : MonoBehaviour
                         break;
 
                     case 0:
+                        tile = pool.GetPooledObject("Blank");
+                        tile.transform.position = new Vector2(x, y) + new Vector2(transform.position.x, transform.position.y); //setLocations + mapGeneratorPos
+                        tile.SetActive(true);
+                        //Sprite switching
+                        // int i = Random.Range(0, 3);
+                        //tile.GetComponent<SpriteRenderer>().sprite = tileSprites[1];
+                        tile.transform.SetParent(this.transform); //Set this map fill obj as parent
                         break;
 
                     case 1: //Ground Tile
@@ -98,8 +117,8 @@ public class EditorMapFill : MonoBehaviour
                         tile.transform.position = new Vector2(x, y) + new Vector2(transform.position.x, transform.position.y); //setLocations + mapGeneratorPos
                         tile.SetActive(true);
                         //Sprite switching
-                        int i = Random.Range(0, 3);
-                        tile.GetComponent<SpriteRenderer>().sprite = tileSprites[i];
+                        //i = Random.Range(0, 3);
+                        tile.GetComponent<SpriteRenderer>().sprite = tileSprites[2];
                         tile.transform.SetParent(this.transform); //Set this map fill obj as parent
                         break;
 
@@ -126,5 +145,18 @@ public class EditorMapFill : MonoBehaviour
                 }
             }
         }
+    }
+
+    public int[,] GetMap()
+    {
+        int[,] tempMap = new int[width, height];
+        tempMap = map;
+        return tempMap;
+    }
+
+    public void SetMap(int[,] _newMap)
+    {
+        map = _newMap;
+        DrawMapTiles();
     }
 }

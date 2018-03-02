@@ -4,20 +4,23 @@ using UnityEngine;
 
 public class MouseControl : MonoBehaviour
 {
-    public GameObject tileHoverIcon;
+    // public GameObject tileHoverIcon;
     private Camera cam;
+
     private Canvas canvas;
     private bool editMode = false;
 
     private ObjectPool pool;
+    private EditorMapFill map;
 
     // Use this for initialization
     private void Start()
     {
-        cam = GetComponent<Camera>();
+        cam = GameObject.Find("Main Camera").GetComponent<Camera>();
         canvas = GameObject.Find("Canvas").GetComponent<Canvas>();
         pool = GameObject.Find("TilePooler").GetComponent<ObjectPool>();
-        tileHoverIcon.SetActive(true);
+        map = GameObject.Find("GameData").GetComponent<EditorMapFill>();
+        //tileHoverIcon.SetActive(true);
 
         //MAPFILL
     }
@@ -25,34 +28,25 @@ public class MouseControl : MonoBehaviour
     // Update is called once per frame
     private void FixedUpdate()
     {
-        tileHoverIcon.transform.position = cam.ScreenToWorldPoint(Input.mousePosition);
+        //new Vector3(cam.ScreenToWorldPoint(Input.mousePosition).x, cam.ScreenToWorldPoint(Input.mousePosition).y, 0);
+        //Vector3 origin = new Vector3(Camera.main.ScreenToWorldPoint(Input.mousePosition).x, Camera.main.ScreenToWorldPoint(Input.mousePosition).y, Camera.main.nearClipPlane);
+        Vector3 origin = cam.ScreenToWorldPoint(new Vector3(Input.mousePosition.x, Input.mousePosition.y, cam.nearClipPlane));
 
-        Ray ray = cam.ScreenPointToRay(Input.mousePosition);
+        Ray ray = cam.ScreenPointToRay(new Vector3(Input.mousePosition.x, Input.mousePosition.y, cam.farClipPlane));
 
-        Vector2 origin = new Vector2(cam.ScreenToWorldPoint(Input.mousePosition).x, cam.ScreenToWorldPoint(Input.mousePosition).y);
-        //Ray ray = cam.ScreenPointToRay(Input.mousePosition);
-
-        //Vector2 origin = new Vector2(cam.ScreenToWorldPoint(Input.mousePosition).x, cam.ScreenToWorldPoint(Input.mousePosition).y);
-        RaycastHit2D hit = Physics2D.Raycast(origin, Vector2.zero, 0f, 1 << LayerMask.NameToLayer("Ground"));
+        RaycastHit2D hit = Physics2D.Raycast(ray.origin, ray.direction, Mathf.Infinity);
+        Debug.DrawRay(origin, ray.direction, Color.red);
+        // RaycastHit hit;
 
         if (hit)
         {
-            tileHoverIcon.transform.position = hit.collider.transform.position;
-            if (Input.GetKeyDown(KeyCode.Mouse0))
+            if (transform.localPosition.x < map.width && transform.localPosition.y < map.height && transform.localPosition.x >= 0 && transform.localPosition.y >= 0)
             {
-                hit.transform.parent.GetComponent<MapFill>().UserMapEdit((int)hit.collider.transform.localPosition.x, (int)hit.collider.transform.localPosition.y);
-            }
-        }
-        else
-        {
-            // tileHoverIcon.transform.position = new Vector3(Input.GetAxis("Mouse X") * mouseSpeed, Input.GetAxis("Mouse Y") * mouseSpeed, 0);
-            RaycastHit2D blankHit = Physics2D.Raycast(origin, Vector2.zero, 0f, 1 << LayerMask.NameToLayer("Blank"));
-            if (blankHit)
-            {
-                tileHoverIcon.transform.position = cam.ScreenToWorldPoint(Input.mousePosition);
+                transform.position = hit.collider.transform.position;
                 if (Input.GetKeyDown(KeyCode.Mouse0))
                 {
-                    blankHit.transform.GetComponent<MapFill>().UserMapEdit((int)tileHoverIcon.transform.position.x, (int)tileHoverIcon.transform.position.y);
+                    Debug.Log(hit.collider.transform.localPosition);
+                    map.UserMapEdit((int)hit.collider.transform.localPosition.x, (int)hit.collider.transform.localPosition.y);
                 }
             }
         }
@@ -64,7 +58,7 @@ public class MouseControl : MonoBehaviour
         if (editMode)
         {
             cam.transform.SetParent(null);
-            tileHoverIcon.SetActive(true);
+            //tileHoverIcon.SetActive(true);
         }
     }
 }
