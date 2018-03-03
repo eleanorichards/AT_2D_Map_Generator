@@ -96,6 +96,10 @@ public class PlayerMovement2D : MonoBehaviour
             bullet.transform.position = gun.transform.position;
             bullet.SetActive(true);
         }
+        if (Input.GetKeyDown(KeyCode.Escape))
+        {
+            GameObject.Find("Manager").GetComponent<GameManager>().LoadSceneByName("Menu");
+        }
     }
 
     private bool IsGrounded()

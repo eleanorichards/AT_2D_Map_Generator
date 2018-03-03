@@ -9,26 +9,34 @@ public class ExportImport : MonoBehaviour
 {
     public InputField levelName;
     public Button exportLevel;
+    public Text levelNameDisplay;
     private EditorMapFill mapInfo;
     private GameData data;
     private int[,] map;
+    private GameManager _GM;
 
     //private ProcMapCreation mapCreator;
 
     // Use this for initialization
     private void Start()
     {
-        levelName.text = "Level name...";
+        _GM = GameObject.Find("Manager").GetComponent<GameManager>();
+        if (levelName)
+            levelName.text = "Level name...";
+        else
+            levelNameDisplay.text = _GM.GetCurrentLevel();
+
         mapInfo = GameObject.Find("GameData").GetComponent<EditorMapFill>();
         //mapCreator = GameObject.Find("ProcMapSpawner").GetComponent<ProcMapCreation>();
     }
 
     public void ExportLevel()
     {
-        string destination = Application.persistentDataPath + "/save.dat";
+        //string destination = Application.persistentDataPath + "/save.dat";
         FileStream file;
         map = mapInfo.GetMap();
-        string fileName = levelName.text;
+        string destination = Application.persistentDataPath + "/";
+        string fileName = destination + levelName.text;
 
         if (File.Exists(fileName))
         {
@@ -51,10 +59,10 @@ public class ExportImport : MonoBehaviour
 
     public void LoadFile()
     {
-        // string destination = Application.persistentDataPath + "/save.dat";
         FileStream file;
         int[,] map;
-        string fileName = levelName.text;
+        string destination = Application.persistentDataPath;
+        string fileName = destination + levelName.text;
         if (File.Exists(fileName)) file = File.OpenRead(fileName);
         else
         {
