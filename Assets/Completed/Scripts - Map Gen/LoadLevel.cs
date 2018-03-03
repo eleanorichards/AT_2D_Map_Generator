@@ -18,7 +18,6 @@ public class LoadLevel : MonoBehaviour
         mapInfo = GameObject.Find("GameData").GetComponent<EditorMapFill>();
         _GM = GameObject.Find("Manager").GetComponent<GameManager>();
         LoadFile();
-        // levelNameDisplay.text = _GM.GetCurrentLevel();
     }
 
     // Update is called once per frame
@@ -31,6 +30,7 @@ public class LoadLevel : MonoBehaviour
         FileStream file;
         int[,] map;
         string fileName = _GM.GetCurrentLevel();
+        levelNameDisplay.text = Path.GetFileName(fileName);
         if (File.Exists(fileName))
             file = File.OpenRead(fileName);
         else
@@ -50,6 +50,5 @@ public class LoadLevel : MonoBehaviour
         string currentName = data.fileName;
 
         Debug.Log(data.fileName);
-        Debug.Log(data.map.Length);
     }
 }

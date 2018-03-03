@@ -103,6 +103,7 @@ public class MapFill : MonoBehaviour
                         tile = pool.GetPooledObject("Tile");
                         tile.transform.position = new Vector2(x, y) + new Vector2(transform.position.x, transform.position.y); //setLocations + mapGeneratorPos
                         tile.SetActive(true);
+                        i = Random.Range(4, 6);
                         tile.GetComponent<SpriteRenderer>().sprite = tileSprites[4];
                         tile.transform.SetParent(this.transform); //Set this map fill obj as parent
                         break;

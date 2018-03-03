@@ -43,7 +43,7 @@ public class MouseControl : MonoBehaviour
             if (transform.localPosition.x < map.width && transform.localPosition.y < map.height && transform.localPosition.x >= 0 && transform.localPosition.y >= 0)
             {
                 transform.position = hit.collider.transform.position;
-                if (Input.GetKeyDown(KeyCode.Mouse0))
+                if (Input.GetKey(KeyCode.Mouse0))
                 {
                     Debug.Log(hit.collider.transform.localPosition);
                     map.UserMapEdit((int)hit.collider.transform.localPosition.x, (int)hit.collider.transform.localPosition.y);

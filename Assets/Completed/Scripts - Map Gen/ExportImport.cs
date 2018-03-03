@@ -23,8 +23,6 @@ public class ExportImport : MonoBehaviour
         _GM = GameObject.Find("Manager").GetComponent<GameManager>();
         if (levelName)
             levelName.text = "Level name...";
-        else
-            levelNameDisplay.text = _GM.GetCurrentLevel();
 
         mapInfo = GameObject.Find("GameData").GetComponent<EditorMapFill>();
         //mapCreator = GameObject.Find("ProcMapSpawner").GetComponent<ProcMapCreation>();

@@ -13,12 +13,15 @@ public class ProcMapCreation : MonoBehaviour
     public GameObject newColliderPrefab;
 
     private int spawnPos = 60;
+    private System.Random rnd;
 
     // Use this for initialization
     private void Start()
     {
+        rnd = new System.Random();
         pool = GameObject.Find("TilePooler").GetComponent<ObjectPool>();
         objList.Add(GameObject.Find("SpawnPoint"));
+        seedNum = rnd.Next();
     }
 
     //Could gen 3 at once
@@ -34,7 +37,6 @@ public class ProcMapCreation : MonoBehaviour
         spawnCollider.transform.SetParent(this.gameObject.transform);
         spawnPoints.Add(spawnCollider);
         spawnCollider.GetComponent<SpawnPoint>().SetID(spawnPoints.Count);
-        // spawnCollider.transform.position = spawnPoints[spawnPoints.Count - 1].transform.position + new Vector3(60, 0, 0);
 
         objList.Clear();
         GameObject mapSpawn = pool.GetPooledObject("MapGenerator");
@@ -55,14 +57,7 @@ public class ProcMapCreation : MonoBehaviour
                 map.SetActive(false);
             }
         }
-        //  if (objList.Count > 2)
-        // {
-        //DEACTIVATE all objects
-        //    objList[0].gameObject.SetActive(false);
-        // objList.RemoveAt(0);
-        //  }
-        // objList.Clear();
-        // objList = pool.ReturnActiveObjects("MapGenerator");
+
         spawnPos += 60;
         seedNum++;
         mapIndex++;
