@@ -11,13 +11,22 @@ public class LoadLevel : MonoBehaviour
     public Text levelNameDisplay;
     private int[,] map;
     private EditorMapFill mapInfo;
+    private GameObject[] managers;
 
     // Use this for initialization
     private void Start()
     {
         mapInfo = GameObject.Find("GameData").GetComponent<EditorMapFill>();
-        _GM = GameObject.Find("Manager").GetComponent<GameManager>();
+        managers = GameObject.FindGameObjectsWithTag("Manager");
+        if (managers.Length > 1)
+        {
+            for (int i = 1; i < managers.Length; i++)
+            {
+                Destroy(managers[i]);
+            }
+        }
         LoadFile();
+        _GM = GameObject.Find("Manager").GetComponent<GameManager>();
     }
 
     // Update is called once per frame

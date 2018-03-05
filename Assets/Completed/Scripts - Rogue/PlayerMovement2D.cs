@@ -90,7 +90,7 @@ public class PlayerMovement2D : MonoBehaviour
             rend.flipX = true;
         }
 
-        if (Input.GetKeyDown(KeyCode.Mouse0))
+        if (Input.GetButtonDown("Fire1"))
         {
             bullet = pool.GetPooledObject("Bullet");
             bullet.transform.position = gun.transform.position;

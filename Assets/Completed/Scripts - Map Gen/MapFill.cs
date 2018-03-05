@@ -108,11 +108,22 @@ public class MapFill : MonoBehaviour
                         tile.transform.SetParent(this.transform); //Set this map fill obj as parent
                         break;
 
-                    case 3:
-                        //Treasure
+                    case 3: //TOP LEFT
+                        tile = pool.GetPooledObject("Tile");
+                        tile.transform.position = new Vector2(x, y) + new Vector2(transform.position.x, transform.position.y); //setLocations + mapGeneratorPos
+                        tile.SetActive(true);
+
+                        tile.GetComponent<SpriteRenderer>().sprite = tileSprites[7];
+                        tile.transform.SetParent(this.transform); //Set this map fill obj as parent
                         break;
 
-                    case 4:
+                    case 4: //TOP RIGHT
+                        tile = pool.GetPooledObject("Tile");
+                        tile.transform.position = new Vector2(x, y) + new Vector2(transform.position.x, transform.position.y); //setLocations + mapGeneratorPos
+                        tile.SetActive(true);
+
+                        tile.GetComponent<SpriteRenderer>().sprite = tileSprites[8];
+                        tile.transform.SetParent(this.transform); //Set this map fill obj as parent
                         break;
 
                     case 5:
@@ -367,17 +378,23 @@ public class MapFill : MonoBehaviour
         //8
         //9
         //10
-        for (int x = 0; x < width; x++)
+        for (int x = 1; x < width - 1; x++)
         {
-            for (int y = 0; y < height; y++)
+            for (int y = 1; y < height - 1; y++)
             {
-                if (_map[x, y] == 1)
+                if (_map[x, y] >= 1) //If ground
                 {
-                    if (y < height - 1)
+                    if (_map[x, y + 1] <= 0) //if tile above blank
                     {
-                        if (_map[x, y + 1] <= 0) //blank
+                        map[x, y] = 2; //TOPTILE
+
+                        if (_map[x, y - 1] >= 1 && map[x + 1, y] >= 1 && map[x - 1, y] <= 0) //check right & left side for
                         {
-                            map[x, y] = 2;
+                            map[x, y] = 3;//LEFTCORNER
+                        }
+                        else if (_map[x, y - 1] >= 1 && map[x - 1, y] >= 1 && map[x + 1, y] <= 0) //check right & left side for
+                        {
+                            map[x, y] = 4;//RIGHTCORNER
                         }
                     }
                 }

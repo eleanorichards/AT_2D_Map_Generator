@@ -6,7 +6,7 @@ public class BulletBehaviour : MonoBehaviour
 {
     public float bulletSpeed = 5;
     private bool awake = false;
-
+    private bool hit = false;
     public GameObject white_explosion;
     public GameObject black_explosion;
 
@@ -17,7 +17,7 @@ public class BulletBehaviour : MonoBehaviour
 
     private void FixedUpdate()
     {
-        if (awake)
+        if (awake && !hit)
         {
             transform.Translate(Vector3.right * bulletSpeed);
         }
@@ -33,6 +33,7 @@ public class BulletBehaviour : MonoBehaviour
     {
         if (col.CompareTag("Tile"))
         {
+            hit = true;
             col.gameObject.SetActive(false);
             Invoke("StartWhiteExplosion", 0.1f);
             Invoke("StartBlackExplosion", 0.2f);
