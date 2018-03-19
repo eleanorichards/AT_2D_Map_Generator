@@ -46,28 +46,6 @@ public class MapFill : MonoBehaviour
         Debug.Log("new map..." + seed);
     }
 
-    public void Dropdown_tileTypeChanged(int selected)
-    {
-        switch (selected)
-        {
-            case 0:
-                tileType = TileType.GROUND;
-                break;
-
-            case 1:
-                tileType = TileType.TOPGROUND;
-
-                break;
-
-            case 2:
-                tileType = TileType.BLANK;
-                break;
-
-            default:
-                break;
-        }
-    }
-
     private void DrawMapTiles()
     {
         //DeActivate all active tiles from pool

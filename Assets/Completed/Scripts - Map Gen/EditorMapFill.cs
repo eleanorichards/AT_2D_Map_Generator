@@ -47,7 +47,7 @@ public class EditorMapFill : MonoBehaviour
         {
             for (int y = 0; y < height; y++)
             {
-                map[x, y] = 1; //POPULATE WITH BLANK TILES
+                map[x, y] = 1; //POPULATE WITH ground TILES
             }
         }
         DrawMapTiles();
@@ -60,13 +60,13 @@ public class EditorMapFill : MonoBehaviour
         tiles = pool.ReturnActiveObjects("Tile");
         blanks = pool.ReturnActiveObjects("Blank");
 
-        //foreach (GameObject tile in tiles)
-        //{
-        //    if (tile.transform.position == new Vector3(_x, _y, 0))
-        //    {
-        //        tile.SetActive(false);
-        //    }
-        //}
+        foreach (GameObject tile in tiles)
+        {
+            if (tile.transform.position == new Vector3(_x, _y, 0))
+            {
+                tile.SetActive(false);
+            }
+        }
 
         switch (tileType)
         {
@@ -153,6 +153,28 @@ public class EditorMapFill : MonoBehaviour
                         //tile.transform.position.z -= 3.0f;
                 }
             }
+        }
+    }
+
+    public void Dropdown_IndexChanged(int selected)
+    {
+        switch (selected)
+        {
+            case 0:
+                tileType = TileType.GROUND;
+                break;
+
+            case 1:
+                tileType = TileType.TOPGROUND;
+
+                break;
+
+            case 2:
+                tileType = TileType.BLANK;
+                break;
+
+            default:
+                break;
         }
     }
 
